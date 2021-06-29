@@ -5,7 +5,6 @@ import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
 import MaterialTable, { MTableToolbar } from 'material-table';
-import FilterList from '@material-ui/icons/FilterList';
 import TableIcons from '../../../components/MaterialTable/TableIcons';
 
 import BtsResults from '../../../../api/bts/results/results';
@@ -17,6 +16,16 @@ const Results = props => {
       returnStubValue: true,
     }).reduce((obj, item) => {
       return { ...obj, [item]: item };
+    }, {});
+  };
+
+  const lookupSchoolParser = fieldName => {
+    return Meteor.apply('btsResults.getDistinct', [fieldName], {
+      returnStubValue: true,
+    }).reduce((obj, item) => {
+      let school = props.schools.find(e => e.schoolId === item);
+      let schoolName = school ? school.shortName : '';
+      return { ...obj, [schoolName]: schoolName };
     }, {});
   };
 
@@ -34,6 +43,7 @@ const Results = props => {
     {
       title: 'School',
       field: 'schoolName',
+      lookup: lookupSchoolParser('schoolId'),
     },
     {
       title: 'Grade',
@@ -90,7 +100,6 @@ const Results = props => {
           };
         })}
         icons={TableIcons}
-        // icons={{ Filter: () => <FilterList /> }}
         options={{
           // search: false,
           // paging: false,
