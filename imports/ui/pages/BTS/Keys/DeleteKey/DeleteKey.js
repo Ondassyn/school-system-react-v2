@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import { btsKeysDelete } from '../../../../../api/bts/btsKeys/methods';
+import { btsKeysDelete } from '../../../../../api/bts/keys/methods';
 import useDialogs from '../../../../../api/dialogs/dialogConsumer';
 import useSnackbars from '../../../../../api/notifications/snackbarConsumer';
 

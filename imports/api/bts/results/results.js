@@ -4,7 +4,7 @@ import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
 // define collection
-const BtsKeys = new Mongo.Collection('bts_keys');
+const BtsResults = new Mongo.Collection('BtsResults');
 
 // define schema
 const Schema = new SimpleSchema({
@@ -17,6 +17,12 @@ const Schema = new SimpleSchema({
   examNumber: {
     type: SimpleSchema.Integer,
   },
+  studentId: {
+    type: String,
+  },
+  schoolId: {
+    type: String,
+  },
   grade: {
     type: SimpleSchema.Integer,
   },
@@ -26,14 +32,9 @@ const Schema = new SimpleSchema({
   variant: {
     type: String,
   },
-  keys: Array,
-  'keys.$': {
-    type: Object,
-    blackbox: true,
-  },
 });
 
 // attach schema
-BtsKeys.attachSchema(Schema);
+BtsResults.attachSchema(Schema);
 
-export default BtsKeys;
+export default BtsResults;

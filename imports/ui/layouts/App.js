@@ -19,7 +19,8 @@ import NotFound from '../pages/Not-Found';
 import RecoverPassword from '../pages/RecoverPassword';
 import ResetPassword from '../pages/ResetPassword';
 import TestPage from '../pages/TestPage/TestPage';
-import BtsKeys from '../../ui/pages/BTS/Keys/Keys';
+import BtsKeys from '../pages/BTS/Keys/Keys';
+import BtsResults from '../pages/BTS/Results/Results';
 
 // import Spinner
 import Spinner from '../components/Spinner';
@@ -50,6 +51,13 @@ const App = props => (
               {...props}
             />
             <PropsRoute exact path="/bts/keys" component={BtsKeys} {...props} />
+            <PropsRoute
+              exact
+              path="/bts/results"
+              component={BtsResults}
+              {...props}
+            />
+
             <PropsRoute
               exact
               path="/profile/:_id"

@@ -12,10 +12,17 @@ import '../../api/counters/methods.js';
 import '../../api/counters/publications.js';
 
 // btsKeys api
-import '../../api/bts/btsKeys/methods.js';
-import '../../api/bts/btsKeys/publications.js';
+import '../../api/bts/keys/methods.js';
+import '../../api/bts/keys/publications.js';
 
 // subjects api
 import '../../api/subjects/publications.js';
+
+// btsResults api
+import '../../api/bts/results/methods.js';
+import '../../api/bts/results/publications.js';
+
+// schools api
+import '../../api/schools/publications.js';
 
 // import another api

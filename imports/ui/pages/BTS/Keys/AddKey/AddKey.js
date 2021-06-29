@@ -5,7 +5,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
 
 import { SelectSubject } from './SelectSubject';
-import { btsKeysInsert } from '../../../../../api/bts/btsKeys/methods';
+import { btsKeysInsert } from '../../../../../api/bts/keys/methods';
 import TransitionsModal from '../../../../components/TransitionModal/TransitionModal';
 
 import './style.scss';

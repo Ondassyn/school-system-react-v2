@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import MaterialTable, { MTableToolbar } from 'material-table';
 
 // collection
-import BtsKeys from '../../../../api/bts/btsKeys/btsKeys';
+import BtsKeys from '../../../../api/bts/keys/btsKeys';
 import Subjects from '../../../../api/subjects/subjects';
 
 import AddKey from './AddKey/AddKey';

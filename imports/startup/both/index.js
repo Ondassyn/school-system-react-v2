@@ -9,5 +9,8 @@ import '../../api/users/users';
 import '../../api/counters/counters';
 import '../../api/counters/methods';
 
-import '../../api/bts/btsKeys/btsKeys';
-import '../../api/bts/btsKeys/methods';
+import '../../api/bts/keys/btsKeys';
+import '../../api/bts/keys/methods';
+
+import '../../api/bts/results/results';
+import '../../api/bts/results/methods';
