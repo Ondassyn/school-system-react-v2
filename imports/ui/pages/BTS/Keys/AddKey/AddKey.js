@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import Alert from '@material-ui/lab/Alert';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
 
@@ -40,8 +39,6 @@ const ACADEMIC_YEARS = [
 ];
 
 export default AddKey = props => {
-  const [error, setError] = useState('');
-  const [confirmation, setConfirmation] = useState('');
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [academicYear, setAcademicYear] = props.initialData
     ? useState(props.initialData.academicYear)
@@ -102,7 +99,6 @@ export default AddKey = props => {
   };
 
   const reset = () => {
-    setError('');
     setConfirmation('');
     if (!props.initialData) {
       setAcademicYear(props.currentYear);
@@ -139,12 +135,6 @@ export default AddKey = props => {
 
   form = (
     <form onSubmit={onSubmit}>
-      {error && (
-        <Alert variant="outlined" severity="error">
-          {error}
-        </Alert>
-      )}
-
       <p>Select year</p>
       <Select
         name="academicYear"

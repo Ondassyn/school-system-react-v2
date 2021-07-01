@@ -9,6 +9,7 @@ import TableIcons from '../../../components/MaterialTable/TableIcons';
 
 import BtsResults from '../../../../api/bts/results/results';
 import Schools from '../../../../api/schools/schools';
+import { Upload } from './Upload/Upload';
 
 const Results = props => {
   const lookupParser = fieldName => {
@@ -69,19 +70,9 @@ const Results = props => {
     },
   ];
 
-  const onClick = () => {
-    console.log(
-      Meteor.apply('btsResults.getDistinct', ['grade'], {
-        returnStubValue: true,
-      }).reduce((obj, item) => {
-        return { ...obj, [item]: item };
-      }, {})
-    );
-  };
-
   return (
     <div className="results-page">
-      <button onClick={onClick}>button</button>
+      <Upload />
       <MaterialTable
         title="BTS Results"
         columns={COLUMNS}
