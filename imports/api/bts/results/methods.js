@@ -70,3 +70,26 @@ export const btsResultsGetDistinct = new ValidatedMethod({
     return distinctFieldValues;
   },
 });
+
+export const btsResultsInsert = new ValidatedMethod({
+  name: 'btsResults.insert',
+  mixins: [CallPromiseMixin],
+  validate: null,
+  checkLoggedInError,
+  run(studentResult) {
+    // console.log('counters.insert', _id);
+    const recordInDB = BtsResults.findOne({
+      academicYear: studentResult.academicYear,
+      examNumber: studentResult.examNumber,
+      studentId: studentResult.studentId,
+      day: studentResult.day,
+    });
+    if (recordInDB) {
+      BtsResults.update({ _id: recordInDB._id }, { $set: studentResult });
+      return recordInDB._id;
+    } else {
+      const keyId = BtsResults.insert(studentResult);
+      return keyId;
+    }
+  },
+});

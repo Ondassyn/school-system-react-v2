@@ -11,6 +11,9 @@ import FormControl from '@material-ui/core/FormControl';
 
 import Input from '@material-ui/core/Input';
 
+import { upload } from '../../../../../api/bts/results/upload';
+import useSnackbars from '../../../../../api/notifications/snackbarConsumer';
+
 const EXAM_NUMBERS = [1, 2, 3, 4];
 const DAYS = [1, 2];
 
@@ -24,8 +27,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export const Upload = () => {
+export const Upload = ({ setBlocking, currentYear }) => {
   const classes = useStyles();
+  const { showSnackbar } = useSnackbars();
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [examNumber, setExamNumber] = useState('');
@@ -40,14 +44,50 @@ export const Upload = () => {
     setModalIsOpen(false);
   };
 
+  const processData = async data => {
+    if (!data) {
+      showSnackbar({ message: 'No data is passed', severity: 'error' });
+      return;
+    }
+
+    if (!currentYear) {
+      showSnackbar({
+        message: 'Current year is not defined',
+        severity: 'error',
+      });
+      return;
+    }
+
+    if (!examNumber) {
+      showSnackbar({
+        message: 'Exam number is not selected',
+        severity: 'error',
+      });
+      return;
+    }
+
+    if (!day) {
+      showSnackbar({ message: 'Day is not selected', severity: 'error' });
+      return;
+    }
+
+    closeModal();
+    setBlocking(true);
+    await upload({ data, academicYear: currentYear, examNumber, day })
+      .then(value => showSnackbar({ message: value, severity: 'success' }))
+      .catch(value => showSnackbar({ message: value, severity: 'error' }));
+    setBlocking(false);
+  };
+
   const onSubmit = e => {
     e.preventDefault();
 
+    if (!file) {
+      showSnackbar({ message: 'No file is found', severity: 'error' });
+      return;
+    }
     let fileReader = new FileReader();
-    fileReader.onloadend = () => {
-      const content = fileReader.result;
-      // do something with the content of the file
-    };
+    fileReader.onloadend = () => processData(fileReader.result);
     fileReader.readAsText(file);
   };
 

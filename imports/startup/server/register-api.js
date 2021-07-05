@@ -25,4 +25,5 @@ import '../../api/bts/results/publications.js';
 // schools api
 import '../../api/schools/publications.js';
 
-// import another api
+// students api
+import '../../api/students/publications.js';

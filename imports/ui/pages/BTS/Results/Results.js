@@ -7,11 +7,18 @@ import PropTypes from 'prop-types';
 import MaterialTable, { MTableToolbar } from 'material-table';
 import TableIcons from '../../../components/MaterialTable/TableIcons';
 
+import { Upload } from './Upload/Upload';
+import BlockUi from 'react-block-ui';
+import 'react-block-ui/style.css';
+
+// collections
 import BtsResults from '../../../../api/bts/results/results';
 import Schools from '../../../../api/schools/schools';
-import { Upload } from './Upload/Upload';
+import Students from '../../../../api/students/students';
+import BtsKeys from '../../../../api/bts/keys/btsKeys';
 
 const Results = props => {
+  const [blocking, setBlocking] = useState(false);
   const lookupParser = fieldName => {
     return Meteor.apply('btsResults.getDistinct', [fieldName], {
       returnStubValue: true,
@@ -71,34 +78,43 @@ const Results = props => {
   ];
 
   return (
-    <div className="results-page">
-      <Upload />
-      <MaterialTable
-        title="BTS Results"
-        columns={COLUMNS}
-        data={props.results.map(result => {
-          let school = props.schools.find(e => e.schoolId === result.schoolId);
-          let schoolName = school ? school.shortName : '';
-          return {
-            academicYear: result.academicYear,
-            examNumber: result.examNumber,
-            schoolName,
-            grade: result.grade,
-            division: result.division,
-            surname: result.surname,
-            name: result.name,
-            total: result.total,
-          };
-        })}
-        icons={TableIcons}
-        options={{
-          // search: false,
-          // paging: false,
-          filtering: true,
-          // exportButton: false,
-        }}
-      />
-    </div>
+    <BlockUi
+      tag="div"
+      blocking={blocking}
+      message="Please wait"
+      keepInView="true"
+    >
+      <div className="results-page">
+        <Upload setBlocking={setBlocking} currentYear={props.currentYear} />
+        <MaterialTable
+          title="BTS Results"
+          columns={COLUMNS}
+          data={props.results.map(result => {
+            let school = props.schools.find(
+              e => e.schoolId === result.schoolId
+            );
+            let schoolName = school ? school.shortName : '';
+            return {
+              academicYear: result.academicYear,
+              examNumber: result.examNumber,
+              schoolName,
+              grade: result.grade,
+              division: result.division,
+              surname: result.surname,
+              name: result.name,
+              total: result.total,
+            };
+          })}
+          icons={TableIcons}
+          options={{
+            // search: false,
+            // paging: false,
+            filtering: true,
+            // exportButton: false,
+          }}
+        />
+      </div>
+    </BlockUi>
   );
 };
 
@@ -122,6 +138,14 @@ export default withTracker(props => {
   const schools = Schools.find().fetch();
   const schoolsReady = schoolsSub.ready() && !!schools;
 
+  const studentsSub = Meteor.subscribe('students.all');
+  const students = Students.find().fetch();
+  const studentsReady = studentsSub.ready() && !!students;
+
+  const keysSub = Meteor.subscribe('btsKeys.academicYear', props.currentYear);
+  const keys = BtsKeys.find().fetch();
+  const keysReady = keysSub.ready() && !!keys;
+
   return {
     // remote example (if using ddp)
     // usersReady,
@@ -129,5 +153,7 @@ export default withTracker(props => {
     resultsReady,
     results,
     schools,
+    students,
+    keys,
   };
 })(Results);

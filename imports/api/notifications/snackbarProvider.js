@@ -10,7 +10,7 @@ import Snackbar from '../../ui/components/Snackbar/Snackbar';
 
 export const SnackbarContext = createContext();
 
-const AUTO_DISMISS = 3000;
+const AUTO_DISMISS = 5000;
 
 export function SnackbarProvider({ children }) {
   const [alerts, setAlerts] = useState([]);
