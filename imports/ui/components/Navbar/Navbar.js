@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
@@ -73,33 +73,42 @@ Status.propTypes = {
   loggedIn: PropTypes.bool.isRequired,
 };
 
-const Navbar = ({ loggedIn }) => (
-  <nav className="navbar navbar-expand-lg navbar-light bg-light">
-    <Status loggedIn={loggedIn} />
-    <span className="navbar-brand" href="#">
-      <NavLink to="/">Brand</NavLink>
-    </span>
-    <button
-      className="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span className="navbar-toggler-icon" />
-    </button>
-    <div className="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul className="navbar-nav ml-auto">
-        {loggedIn ? <LoggedInNav /> : <PublicNav />}
-      </ul>
-    </div>
-  </nav>
-);
+const Navbar = ({ loggedIn, setHeight }) => {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    setHeight(ref.current.clientHeight);
+  });
+
+  return (
+    <nav ref={ref} className="navbar navbar-expand-lg navbar-light bg-light">
+      <Status loggedIn={loggedIn} />
+      <span className="navbar-brand" href="#">
+        <NavLink to="/">Brand</NavLink>
+      </span>
+      <button
+        className="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span className="navbar-toggler-icon" />
+      </button>
+      <div className="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul className="navbar-nav ml-auto">
+          {loggedIn ? <LoggedInNav /> : <PublicNav />}
+        </ul>
+      </div>
+    </nav>
+  );
+};
 
 Navbar.propTypes = {
   loggedIn: PropTypes.bool.isRequired,
+  setHeight: PropTypes.func.isRequired,
 };
 
 export default Navbar;

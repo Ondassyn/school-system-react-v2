@@ -3,7 +3,7 @@
 // import packages
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 
@@ -21,6 +21,7 @@ import ResetPassword from '../pages/ResetPassword';
 import TestPage from '../pages/TestPage/TestPage';
 import BtsKeys from '../pages/BTS/Keys/Keys';
 import BtsResults from '../pages/BTS/Results/Results';
+import BtsMain from '../pages/BTS/Main/Main';
 
 // import Spinner
 import Spinner from '../components/Spinner';
@@ -31,56 +32,78 @@ import PropsRoute from '../pages/PropsRoute';
 import { CurrentYear } from '../../api/academicYears/academicYears';
 import { SnackbarProvider } from '../../api/notifications/snackbarProvider';
 import { DialogProvider } from '../../api/dialogs/dialogProvider';
+import { DrawerProvider } from '../../api/drawer/drawerProvider';
 
-const App = props => (
-  <DialogProvider>
-    <SnackbarProvider>
-      <Router>
-        <div>
-          <PropsRoute component={Navbar} {...props} />
-          {props.loggingIn && <Spinner />}
-          <Switch>
-            <PropsRoute exact path="/" component={Landing} {...props} />
-            <PropsRoute path="/login" component={Login} {...props} />
-            <PropsRoute path="/signup" component={Signup} {...props} />
-            <PropsRoute exact path="/profile" component={Profile} {...props} />
-            <PropsRoute
-              exact
-              path="/test_page"
-              component={TestPage}
-              {...props}
-            />
-            <PropsRoute exact path="/bts/keys" component={BtsKeys} {...props} />
-            <PropsRoute
-              exact
-              path="/bts/results"
-              component={BtsResults}
-              {...props}
-            />
+const App = props => {
+  const [navbarHeight, setNavbarHeight] = useState(0);
 
+  return (
+    <DialogProvider>
+      <SnackbarProvider>
+        <Router>
+          <div>
             <PropsRoute
-              exact
-              path="/profile/:_id"
-              component={Profile}
+              component={Navbar}
               {...props}
+              setHeight={setNavbarHeight}
             />
-            <PropsRoute
-              path="/recover-password"
-              component={RecoverPassword}
-              {...props}
-            />
-            <PropsRoute
-              path="/reset-password/:token"
-              component={ResetPassword}
-              {...props}
-            />
-            <PropsRoute component={NotFound} {...props} />
-          </Switch>
-        </div>
-      </Router>
-    </SnackbarProvider>
-  </DialogProvider>
-);
+            {props.loggingIn && <Spinner />}
+            <Switch>
+              <DrawerProvider navbarHeight={navbarHeight}>
+                <PropsRoute exact path="/" component={Landing} {...props} />
+                <PropsRoute path="/login" component={Login} {...props} />
+                <PropsRoute path="/signup" component={Signup} {...props} />
+                <PropsRoute
+                  exact
+                  path="/profile"
+                  component={Profile}
+                  {...props}
+                />
+                <PropsRoute exact path="/bts" component={BtsMain} {...props} />
+                <PropsRoute
+                  exact
+                  path="/test_page"
+                  component={TestPage}
+                  {...props}
+                />
+                <PropsRoute
+                  exact
+                  path="/bts/keys"
+                  component={BtsKeys}
+                  {...props}
+                />
+                <PropsRoute
+                  exact
+                  path="/bts/results"
+                  component={BtsResults}
+                  {...props}
+                />
+
+                <PropsRoute
+                  exact
+                  path="/profile/:_id"
+                  component={Profile}
+                  {...props}
+                />
+                <PropsRoute
+                  path="/recover-password"
+                  component={RecoverPassword}
+                  {...props}
+                />
+                <PropsRoute
+                  path="/reset-password/:token"
+                  component={ResetPassword}
+                  {...props}
+                />
+                <PropsRoute component={NotFound} {...props} />
+              </DrawerProvider>
+            </Switch>
+          </div>
+        </Router>
+      </SnackbarProvider>
+    </DialogProvider>
+  );
+};
 
 App.propTypes = {
   loggingIn: PropTypes.bool.isRequired,
