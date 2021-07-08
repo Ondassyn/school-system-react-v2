@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -18,7 +18,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 
-import Navbar from '../Navbar';
+import { Router, Route, Link } from 'react-router-dom';
+
+import './Drawer.scss';
 
 const drawerWidth = 240;
 
@@ -76,8 +78,9 @@ const useStyles = makeStyles(theme => ({
   toolbar: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1),
+    // justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    padding: theme.spacing(0, 2),
     // necessary for content to be below app bar
     // ...theme.mixins.toolbar
   },
@@ -87,10 +90,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MiniDrawer({ children, navbarHeight }) {
+export default function MiniDrawer({
+  children,
+  navbarHeight,
+  mainTitle,
+  items,
+}) {
   const classes = useStyles({ navbarHeight });
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState(-1);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -140,6 +149,19 @@ export default function MiniDrawer({ children, navbarHeight }) {
         }}
       >
         <div className={classes.toolbar}>
+          {open && (
+            <Typography
+              id="drawer-title"
+              style={{ textDecoration: 'none' }}
+              onClick={() => setSelected(-1)}
+              component={Link}
+              to={mainTitle.link}
+              variant="h6"
+              noWrap
+            >
+              {mainTitle.title}
+            </Typography>
+          )}
           {open ? (
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === 'rtl' ? (
@@ -164,25 +186,38 @@ export default function MiniDrawer({ children, navbarHeight }) {
         </div>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+          {items.map((item, index) => (
+            <ListItem
+              button
+              key={item.title}
+              component={Link}
+              to={item.link}
+              onClick={() => setSelected(index)}
+              selected={selected === index}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.title} />
+            </ListItem>
+          ))}
+          {/* {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
             <ListItem button key={text}>
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
-          ))}
+          ))} */}
         </List>
         <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
+          {/* {['All mail', 'Trash', 'Spam'].map((text, index) => (
             <ListItem button key={text}>
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
-          ))}
+          ))} */}
         </List>
       </Drawer>
       <main className={classes.content}>

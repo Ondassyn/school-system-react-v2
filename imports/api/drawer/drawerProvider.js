@@ -11,7 +11,8 @@ import Drawer from '../../ui/components/Drawer/Drawer';
 export const DrawerContext = createContext();
 
 export function DrawerProvider({ children, navbarHeight }) {
-  // const [alerts, setAlerts] = useState([]);
+  const [items, setItems] = useState([]);
+  const [mainTitle, setMainTitle] = useState('');
 
   // const activeAlertIds = alerts.join(',');
   // useEffect(() => {
@@ -24,16 +25,22 @@ export function DrawerProvider({ children, navbarHeight }) {
   //   }
   // }, [activeAlertIds]);
 
-  // const showSnackbar = useCallback(
-  //   content => setAlerts(alerts => [content, ...alerts]),
-  //   []
-  // );
+  const setDrawer = useCallback(content => setItems(content), []);
+  const setDrawerTitle = useCallback(content => setMainTitle(content), []);
 
-  // const value = useMemo(() => ({ showSnackbar }), [showSnackbar]);
+  const value = useMemo(() => ({ setDrawer, setDrawerTitle }), [
+    setDrawer,
+    setDrawerTitle,
+  ]);
 
   return (
-    <DrawerContext.Provider value="dark">
-      <Drawer children={children} navbarHeight={navbarHeight} />
+    <DrawerContext.Provider value={value}>
+      <Drawer
+        children={children}
+        navbarHeight={navbarHeight}
+        mainTitle={mainTitle}
+        items={items}
+      />
       {/* {children} */}
       {/* {alerts.map(alert => (
           <Snackbar
