@@ -75,7 +75,6 @@ export const Upload = ({ setBlocking, currentYear }) => {
     setBlocking(true);
     await upload({ data, academicYear: currentYear, examNumber, day })
       .then(value => showSnackbar({ message: value, severity: 'success' }))
-      .then(calculateRating())
       .catch(value => showSnackbar({ message: value, severity: 'error' }));
     setBlocking(false);
   };

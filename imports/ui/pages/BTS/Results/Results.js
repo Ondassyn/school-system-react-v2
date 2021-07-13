@@ -134,6 +134,13 @@ export default withTracker(props => {
   const results = BtsResults.find().fetch();
   const resultsReady = resultsSub.ready() && !!results;
 
+  // const ratingsSub = Meteor.subscribe(
+  //   'btsRatings.academicYear',
+  //   props.currentYear
+  // );
+  // const ratings = BtsRatings.find().fetch();
+  // const ratingsReady = ratingsSub.ready() && !!ratings;
+
   const schoolsSub = Meteor.subscribe('schools.all');
   const schools = Schools.find().fetch();
   const schoolsReady = schoolsSub.ready() && !!schools;
@@ -154,6 +161,7 @@ export default withTracker(props => {
     results,
     schools,
     students,
+    // ratings,
     keys,
   };
 })(Results);

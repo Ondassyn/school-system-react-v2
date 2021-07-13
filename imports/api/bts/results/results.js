@@ -26,8 +26,36 @@ const Schema = new SimpleSchema({
   grade: {
     type: SimpleSchema.Integer,
   },
+  division: {
+    type: String,
+  },
   day: {
     type: SimpleSchema.Integer,
+  },
+  variant: {
+    type: String,
+  },
+  surname: {
+    type: String,
+  },
+  name: {
+    type: String,
+  },
+  languageGroup: {
+    type: String,
+    optional: true,
+  },
+  electiveGroup: {
+    type: String,
+    optional: true,
+  },
+  total: {
+    type: SimpleSchema.Integer,
+  },
+  results: Array,
+  'results.$': {
+    type: Object,
+    blackbox: true,
   },
 });
 

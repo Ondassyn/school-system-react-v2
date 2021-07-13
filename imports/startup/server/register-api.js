@@ -22,6 +22,10 @@ import '../../api/subjects/publications.js';
 import '../../api/bts/results/methods.js';
 import '../../api/bts/results/publications.js';
 
+// btsRatings api
+import '../../api/bts/ratings/methods.js';
+import '../../api/bts/ratings/publications.js';
+
 // schools api
 import '../../api/schools/publications.js';
 

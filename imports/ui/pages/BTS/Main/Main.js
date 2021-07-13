@@ -10,7 +10,7 @@ const DRAWER_TITLE = { title: 'BTS', link: '/bts' };
 const DRAWER_MENU = [
   { title: 'Answer keys', icon: <VpnKeyOutlinedIcon />, link: '/bts/keys' },
   { title: 'Results', icon: <ListAltOutlinedIcon />, link: '/bts/results' },
-  { title: 'Rating', icon: <InsertChartOutlinedIcon />, link: '/bts/rating' },
+  { title: 'Rating', icon: <InsertChartOutlinedIcon />, link: '/bts/ratings' },
 ];
 
 export default Main = () => {

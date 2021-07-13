@@ -21,6 +21,7 @@ import ResetPassword from '../pages/ResetPassword';
 import TestPage from '../pages/TestPage/TestPage';
 import BtsKeys from '../pages/BTS/Keys/Keys';
 import BtsResults from '../pages/BTS/Results/Results';
+import BtsRatings from '../pages/BTS/Ratings/Ratings';
 import BtsMain from '../pages/BTS/Main/Main';
 
 // import Spinner
@@ -48,8 +49,8 @@ const App = props => {
               setHeight={setNavbarHeight}
             />
             {props.loggingIn && <Spinner />}
-            <Switch>
-              <DrawerProvider navbarHeight={navbarHeight}>
+            <DrawerProvider navbarHeight={navbarHeight}>
+              <Switch>
                 <PropsRoute exact path="/" component={Landing} {...props} />
                 <PropsRoute path="/login" component={Login} {...props} />
                 <PropsRoute path="/signup" component={Signup} {...props} />
@@ -78,6 +79,12 @@ const App = props => {
                   component={BtsResults}
                   {...props}
                 />
+                <PropsRoute
+                  exact
+                  path="/bts/ratings"
+                  component={BtsRatings}
+                  {...props}
+                />
 
                 <PropsRoute
                   exact
@@ -96,8 +103,8 @@ const App = props => {
                   {...props}
                 />
                 <PropsRoute component={NotFound} {...props} />
-              </DrawerProvider>
-            </Switch>
+              </Switch>
+            </DrawerProvider>
           </div>
         </Router>
       </SnackbarProvider>

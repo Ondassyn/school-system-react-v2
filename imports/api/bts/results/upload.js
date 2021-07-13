@@ -3,6 +3,7 @@ import Schools from '../../schools/schools';
 import Students from '../../students/students';
 
 import { btsResultsInsert } from './methods';
+import { calculateRating } from './calculateRating';
 
 export const upload = ({ data, academicYear, examNumber, day }) => {
   const INTERVAL = 5;
@@ -58,6 +59,7 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
         languageGroup: student.languageGroup,
         electiveGroup: student.electiveGroup,
         total: 0,
+        results: [],
       };
 
       let sliceIndex = 0;
@@ -68,7 +70,7 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
             `No keys could be found, line ${i}: {variant: ${variant}, subjectId: ${subjectId}}`
           );
 
-        studentResult[subjectId] = 0;
+        let subjectResult = 0;
         const questionsN = subjectKeys.length;
         const subjectAnswers = answers.substring(
           sliceIndex,
@@ -80,16 +82,21 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
             .trim()
             .toUpperCase();
           if (subjectKeys[index].toUpperCase() === studentAnswer) {
-            studentResult[subjectId]++;
+            subjectResult++;
             studentResult['total']++;
           }
         }
+        studentResult.results.push({ subjectId, result: subjectResult });
       });
 
       btsResultsInsert.call(studentResult, (err, res) => {
         err && reject(err.message);
       });
     }
+
+    calculateRating({ academicYear, examNumber }).catch(value => {
+      reject(value);
+    });
 
     resolve('Inserted');
   });
