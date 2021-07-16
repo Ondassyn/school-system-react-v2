@@ -13,13 +13,13 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
+    // border: '2px solid #000',
     boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
+    padding: theme.spacing(5, 5, 3),
   },
 }));
 
-export default function TransitionsModal({ form, isOpen, close }) {
+export default function TransitionModal({ form, isOpen, close }) {
   const classes = useStyles();
 
   return (

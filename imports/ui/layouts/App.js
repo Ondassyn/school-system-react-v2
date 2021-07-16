@@ -34,81 +34,98 @@ import { CurrentYear } from '../../api/academicYears/academicYears';
 import { SnackbarProvider } from '../../api/notifications/snackbarProvider';
 import { DialogProvider } from '../../api/dialogs/dialogProvider';
 import { DrawerProvider } from '../../api/drawer/drawerProvider';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './../../api/localization/i18n';
+import Settings from '../pages/Settings/Settings';
 
 const App = props => {
   const [navbarHeight, setNavbarHeight] = useState(0);
 
   return (
-    <DialogProvider>
-      <SnackbarProvider>
-        <Router>
-          <div>
-            <PropsRoute
-              component={Navbar}
-              {...props}
-              setHeight={setNavbarHeight}
-            />
-            {props.loggingIn && <Spinner />}
-            <DrawerProvider navbarHeight={navbarHeight}>
-              <Switch>
-                <PropsRoute exact path="/" component={Landing} {...props} />
-                <PropsRoute path="/login" component={Login} {...props} />
-                <PropsRoute path="/signup" component={Signup} {...props} />
-                <PropsRoute
-                  exact
-                  path="/profile"
-                  component={Profile}
-                  {...props}
-                />
-                <PropsRoute exact path="/bts" component={BtsMain} {...props} />
-                <PropsRoute
-                  exact
-                  path="/test_page"
-                  component={TestPage}
-                  {...props}
-                />
-                <PropsRoute
-                  exact
-                  path="/bts/keys"
-                  component={BtsKeys}
-                  {...props}
-                />
-                <PropsRoute
-                  exact
-                  path="/bts/results"
-                  component={BtsResults}
-                  {...props}
-                />
-                <PropsRoute
-                  exact
-                  path="/bts/ratings"
-                  component={BtsRatings}
-                  {...props}
-                />
+    <I18nextProvider i18n={i18n}>
+      <DialogProvider>
+        <SnackbarProvider>
+          <Router>
+            <div>
+              <PropsRoute
+                component={Navbar}
+                {...props}
+                setHeight={setNavbarHeight}
+              />
+              {props.loggingIn && <Spinner />}
+              <DrawerProvider navbarHeight={navbarHeight}>
+                <Switch>
+                  <PropsRoute exact path="/" component={Landing} {...props} />
+                  <PropsRoute path="/login" component={Login} {...props} />
+                  <PropsRoute path="/signup" component={Signup} {...props} />
+                  <PropsRoute
+                    exact
+                    path="/profile"
+                    component={Profile}
+                    {...props}
+                  />
 
-                <PropsRoute
-                  exact
-                  path="/profile/:_id"
-                  component={Profile}
-                  {...props}
-                />
-                <PropsRoute
-                  path="/recover-password"
-                  component={RecoverPassword}
-                  {...props}
-                />
-                <PropsRoute
-                  path="/reset-password/:token"
-                  component={ResetPassword}
-                  {...props}
-                />
-                <PropsRoute component={NotFound} {...props} />
-              </Switch>
-            </DrawerProvider>
-          </div>
-        </Router>
-      </SnackbarProvider>
-    </DialogProvider>
+                  <PropsRoute
+                    exact
+                    path="/settings"
+                    component={Settings}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/bts"
+                    component={BtsMain}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/test_page"
+                    component={TestPage}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/bts/keys"
+                    component={BtsKeys}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/bts/results"
+                    component={BtsResults}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/bts/ratings"
+                    component={BtsRatings}
+                    {...props}
+                  />
+
+                  <PropsRoute
+                    exact
+                    path="/profile/:_id"
+                    component={Profile}
+                    {...props}
+                  />
+                  <PropsRoute
+                    path="/recover-password"
+                    component={RecoverPassword}
+                    {...props}
+                  />
+                  <PropsRoute
+                    path="/reset-password/:token"
+                    component={ResetPassword}
+                    {...props}
+                  />
+                  <PropsRoute component={NotFound} {...props} />
+                </Switch>
+              </DrawerProvider>
+            </div>
+          </Router>
+        </SnackbarProvider>
+      </DialogProvider>
+    </I18nextProvider>
   );
 };
 
@@ -131,5 +148,6 @@ export default withTracker(() => {
     userReady,
     loggedIn,
     currentYear,
+    i18n,
   };
 })(App);

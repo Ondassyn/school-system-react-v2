@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+
 import MaterialTable, { MTableToolbar } from 'material-table';
+import TableIcons from '../../../components/MaterialTable/TableIcons';
 
 // collection
 import BtsKeys from '../../../../api/bts/keys/btsKeys';
@@ -13,7 +16,63 @@ import Subjects from '../../../../api/subjects/subjects';
 import AddKey from './AddKey/AddKey';
 import DeleteKey from './DeleteKey/DeleteKey';
 
+import useDrawer from '../../../../api/drawer/drawerConsumer';
+
+import VpnKeyOutlinedIcon from '@material-ui/icons/VpnKeyOutlined';
+import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined';
+import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
+
+import Typography from '@material-ui/core/Typography';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '1rem 2rem 0 2rem',
+  },
+  actions: {
+    display: 'flex',
+  },
+}));
+
+const EXAM_TITLE = 'bts';
+
+const DRAWER_TITLE = {
+  title: EXAM_TITLE.toUpperCase(),
+  link: '/' + EXAM_TITLE,
+};
+
+const DRAWER_MENU = [
+  {
+    title: 'Answer keys',
+    icon: <VpnKeyOutlinedIcon />,
+    link: '/' + EXAM_TITLE + '/keys',
+  },
+  {
+    title: 'Results',
+    icon: <ListAltOutlinedIcon />,
+    link: '/' + EXAM_TITLE + '/results',
+  },
+  {
+    title: 'Rating',
+    icon: <InsertChartOutlinedIcon />,
+    link: '/' + EXAM_TITLE + '/ratings',
+  },
+];
+
 function Keys(props) {
+  const classes = useStyles();
+  const { setDrawer, setDrawerTitle } = useDrawer();
+
+  useEffect(() => {
+    setDrawerTitle(DRAWER_TITLE);
+    setDrawer(DRAWER_MENU);
+  }, []);
+
   const COLUMNS = [
     {
       title: 'Year',
@@ -42,9 +101,9 @@ function Keys(props) {
   ];
 
   return (
-    <div className="keys-page">
+    <div className={classes.root}>
       <MaterialTable
-        title="BTS Keys"
+        title=""
         data={props.keys.map(e => {
           let ids = '';
           e.keys.map(f => {
@@ -61,13 +120,14 @@ function Keys(props) {
             ids: ids,
           };
         })}
+        icons={TableIcons}
         columns={[
           ...COLUMNS,
           {
             title: 'Actions',
             render: rowData => {
               return (
-                <div>
+                <div className={classes.actions}>
                   <AddKey
                     icon={'edit'}
                     initialData={props.keys.find(e => e._id === rowData._id)}
@@ -82,7 +142,10 @@ function Keys(props) {
         ]}
         components={{
           Toolbar: localProps => (
-            <div className="toolbar">
+            <div className={classes.toolbar}>
+              <Typography className={classes.tableTitle} variant="h6">
+                {EXAM_TITLE.toUpperCase() + ' Keys'}
+              </Typography>
               <MTableToolbar {...localProps} />
               <AddKey
                 icon={'add'}

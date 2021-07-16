@@ -1,44 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
-import EditIcon from '@material-ui/icons/Edit';
+import Select from '@material-ui/core/Select';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import AddIcon from '@material-ui/icons/Add';
+
+import Button from '@material-ui/core/Button';
 
 import { SelectSubject } from './SelectSubject';
 import { btsKeysInsert } from '../../../../../api/bts/keys/methods';
-import TransitionsModal from '../../../../components/TransitionModal/TransitionModal';
+import TransitionModal from '../../../../components/TransitionModal/TransitionModal';
+import FormControl from '@material-ui/core/FormControl';
+
+import MenuItem from '@material-ui/core/MenuItem';
 
 import './style.scss';
 import useSnackbars from '../../../../../api/notifications/snackbarConsumer';
 
-const GRADES = [
-  { value: 7, label: '7' },
-  { value: 8, label: '8' },
-  { value: 9, label: '9' },
-  { value: 10, label: '10' },
-];
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 
-const DAYS = [
-  { value: 1, label: '1' },
-  { value: 2, label: '2' },
-];
+const useStyles = makeStyles(theme => {});
 
-const EXAM_NUMBERS = [
-  { value: 1, label: '1' },
-  { value: 2, label: '2' },
-  { value: 3, label: '3' },
-  { value: 4, label: '4' },
-];
+const GRADES = [7, 8, 9, 10];
 
-const ACADEMIC_YEARS = [
-  { value: '2015-2016', label: '2015-2016' },
-  { value: '2016-2017', label: '2016-2017' },
-  { value: '2017-2018', label: '2017-2018' },
-  { value: '2019-2019', label: '2019-2019' },
-  { value: '2019-2020', label: '2019-2020' },
-  { value: '2020-2021', label: '2020-2021' },
-];
+const DAYS = [1, 2];
+
+const EXAM_NUMBERS = [1, 2, 3, 4];
 
 export default AddKey = props => {
+  const classes = useStyles();
+
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [academicYear, setAcademicYear] = props.initialData
     ? useState(props.initialData.academicYear)
@@ -48,7 +37,7 @@ export default AddKey = props => {
     : useState();
   const [examNumber, setExamNumber] = props.initialData
     ? useState(props.initialData.examNumber)
-    : useState();
+    : useState('');
   const [day, setDay] = props.initialData
     ? useState(props.initialData.day)
     : useState();
@@ -98,18 +87,6 @@ export default AddKey = props => {
     );
   };
 
-  const reset = () => {
-    setConfirmation('');
-    if (!props.initialData) {
-      setAcademicYear(props.currentYear);
-      setGrade();
-      setExamNumber();
-      setDay();
-      setVariant();
-      setKeys([{ index: Math.random(), subjectId: '', keys: '' }]);
-    }
-  };
-
   addRow = e => {
     setKeys(oldKeys => [
       ...oldKeys,
@@ -135,8 +112,9 @@ export default AddKey = props => {
 
   form = (
     <form onSubmit={onSubmit}>
-      <p>Select year</p>
-      <Select
+      <FormControl className={classes.formControl}>
+        {/* <p>Select year</p>
+       <Select
         name="academicYear"
         onChange={event => setAcademicYear(event.value)}
         options={ACADEMIC_YEARS}
@@ -151,7 +129,7 @@ export default AddKey = props => {
                 )
               ]
         }
-      />
+      ></Select>
       <p>Select grade</p>
       <Select
         name="grade"
@@ -160,21 +138,27 @@ export default AddKey = props => {
         defaultValue={
           grade ? GRADES[GRADES.findIndex(e => e.value === grade)] : undefined
         }
-      />
+      /> */}
 
-      <p>Select exam number</p>
-      <Select
-        name="examNumber"
-        onChange={event => setExamNumber(event.value)}
-        options={EXAM_NUMBERS}
-        defaultValue={
-          examNumber
-            ? EXAM_NUMBERS[EXAM_NUMBERS.findIndex(e => e.value === examNumber)]
-            : undefined
-        }
-      />
+        <p>Select exam number</p>
+        <Select
+          value={examNumber}
+          onChange={event => setExamNumber(event.target.value)}
+          // options={EXAM_NUMBERS}
+          // defaultValue={
+          //   examNumber
+          //     ? EXAM_NUMBERS[EXAM_NUMBERS.findIndex(e => e === examNumber)]
+          //     : ''
+          // }
+        >
+          {EXAM_NUMBERS.map(e => (
+            <MenuItem key={e} value={e}>
+              {e}
+            </MenuItem>
+          ))}
+        </Select>
 
-      <p>Select day</p>
+        {/* <p>Select day</p>
       <Select
         name="day"
         onChange={event => setDay(event.value)}
@@ -200,8 +184,8 @@ export default AddKey = props => {
         deleteRow={deleteRow}
         setSubjectKeys={setSubjectKeys}
         setSubjectId={setSubjectId}
-      />
-
+      /> */}
+      </FormControl>
       <div className="form-group">
         <button className="form-control btn btn-primary" type="submit">
           Submit
@@ -213,15 +197,18 @@ export default AddKey = props => {
   return (
     <div>
       {props.icon === 'edit' ? (
-        <EditIcon
+        <EditOutlinedIcon
           // className="btn btn-lg btn-danger center modal-button"
           className="icon"
           onClick={showModal}
         />
       ) : (
-        <AddIcon className="icon" onClick={showModal} />
+        // <AddIcon className="icon" onClick={showModal} />
+        <Button variant="outlined" color="primary" onClick={showModal}>
+          Add
+        </Button>
       )}
-      <TransitionsModal form={form} isOpen={modalIsOpen} close={closeModal} />
+      <TransitionModal form={form} isOpen={modalIsOpen} close={closeModal} />
     </div>
   );
 };

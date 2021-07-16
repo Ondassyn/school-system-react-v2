@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
-import TransitionsModal from '../../../../components/TransitionModal/TransitionModal';
+import TransitionModal from '../../../../components/TransitionModal/TransitionModal';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -136,7 +136,7 @@ export const Upload = ({ setBlocking, currentYear }) => {
   return (
     <div>
       <AddIcon className="icon" onClick={showModal} />
-      <TransitionsModal form={form} isOpen={modalIsOpen} close={closeModal} />
+      <TransitionModal form={form} isOpen={modalIsOpen} close={closeModal} />
     </div>
   );
 };

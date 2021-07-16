@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
@@ -73,8 +73,16 @@ Status.propTypes = {
   loggedIn: PropTypes.bool.isRequired,
 };
 
-const Navbar = ({ loggedIn, setHeight }) => {
+const Navbar = ({ loggedIn, setHeight, i18n }) => {
   const ref = useRef(null);
+
+  const [language, setLanguage] = useState('en');
+
+  const onLanguageHandle = event => {
+    let newLang = event.target.value;
+    setLanguage(newLang);
+    i18n.changeLanguage(newLang);
+  };
 
   useEffect(() => {
     setHeight(ref.current.clientHeight);
@@ -101,6 +109,32 @@ const Navbar = ({ loggedIn, setHeight }) => {
         <ul className="navbar-nav ml-auto">
           {loggedIn ? <LoggedInNav /> : <PublicNav />}
         </ul>
+      </div>
+      <div>
+        <input
+          checked={language === 'en'}
+          name="language"
+          onChange={onLanguageHandle}
+          value="en"
+          type="radio"
+        />
+        English &nbsp;
+        <input
+          name="language"
+          value="ru"
+          checked={language === 'ru'}
+          type="radio"
+          onChange={onLanguageHandle}
+        />
+        Russian
+        <input
+          name="language"
+          value="kz"
+          checked={language === 'kz'}
+          type="radio"
+          onChange={onLanguageHandle}
+        />
+        Kazakh
       </div>
     </nav>
   );

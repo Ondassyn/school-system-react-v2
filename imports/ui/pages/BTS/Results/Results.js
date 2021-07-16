@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
@@ -17,8 +17,29 @@ import Schools from '../../../../api/schools/schools';
 import Students from '../../../../api/students/students';
 import BtsKeys from '../../../../api/bts/keys/btsKeys';
 
+import useDrawer from '../../../../api/drawer/drawerConsumer';
+
+import VpnKeyOutlinedIcon from '@material-ui/icons/VpnKeyOutlined';
+import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined';
+import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
+
+const DRAWER_TITLE = { title: 'BTS', link: '/bts' };
+
+const DRAWER_MENU = [
+  { title: 'Answer keys', icon: <VpnKeyOutlinedIcon />, link: '/bts/keys' },
+  { title: 'Results', icon: <ListAltOutlinedIcon />, link: '/bts/results' },
+  { title: 'Rating', icon: <InsertChartOutlinedIcon />, link: '/bts/ratings' },
+];
+
 const Results = props => {
   const [blocking, setBlocking] = useState(false);
+  const { setDrawer, setDrawerTitle } = useDrawer();
+
+  useEffect(() => {
+    setDrawerTitle(DRAWER_TITLE);
+    setDrawer(DRAWER_MENU);
+  }, []);
+
   const lookupParser = fieldName => {
     return Meteor.apply('btsResults.getDistinct', [fieldName], {
       returnStubValue: true,
