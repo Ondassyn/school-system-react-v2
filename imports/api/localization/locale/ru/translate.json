@@ -4,6 +4,10 @@
         "add": "Добавить", 
         "role_title": "Название роли",
         "cancel" : "Отмена",
+        "empty_field": "Пожалуйста, заполните все поля",
+        "something_wrong": "Что-то пошло не так",
+        "done": "Выполнено",
+
         "paragraph": "Introduction",
         "author": {
             "title": "Author Name",

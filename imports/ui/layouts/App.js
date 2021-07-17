@@ -143,6 +143,8 @@ export default withTracker(() => {
   const loggingIn = Meteor.loggingIn();
   const loggedIn = !loggingIn && userReady;
   const currentYear = CurrentYear;
+  const rolesSub = Meteor.subscribe('roles.all');
+
   return {
     loggingIn,
     userReady,

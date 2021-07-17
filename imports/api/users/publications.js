@@ -29,6 +29,10 @@ if (Meteor.isServer) {
     return this.ready();
   });
 
+  Meteor.publish('roles.all', function() {
+    return Meteor.roles.find();
+  });
+
   // example friends publication
   // Meteor.publish('users.friends', function() {
   //   if (this.userId) {

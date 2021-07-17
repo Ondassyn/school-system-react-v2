@@ -3,7 +3,11 @@
         "create_role": "Рөл жасау",
         "add": "Қосу",
         "role_title": "Рөл атауы",
-        "cancel" : "Жою",
+        "cancel" : "Жабу",
+        "empty_field": "Барлық өрістерді толтырыңыз",
+        "something_wrong": "Бірдеңе дұрыс болмады",
+        "done": "Дайын",
+
         "paragraph": "Introduction",
         "author": {
             "title": "Author Name",

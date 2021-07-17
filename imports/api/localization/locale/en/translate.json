@@ -4,6 +4,10 @@
         "add": "ADD",
         "role_title": "Role title",
         "cancel" : "Cancel",
+        "empty_field": "Please fill out all fields",
+        "something_wrong": "Something went wrong",
+        "done": "Done",
+
         "paragraph": "Introduction",
         "author": {
             "title": "Author Name",
