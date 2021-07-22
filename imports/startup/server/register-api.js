@@ -31,3 +31,7 @@ import '../../api/schools/publications.js';
 
 // students api
 import '../../api/students/publications.js';
+
+// btsSettings api
+import '../../api/bts/settings/methods.js';
+import '../../api/bts/settings/publications.js';

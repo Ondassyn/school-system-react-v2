@@ -7,7 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
 
-import './style.scss';
+import { IconButton } from '@material-ui/core';
 
 export default function AlertDialog({
   title,
@@ -46,8 +46,12 @@ export default function AlertDialog({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <CloseIcon className="icon" onClick={wrappedClose} />
-          <DoneIcon className="icon" onClick={wrappedProceed} autoFocus />
+          <IconButton color="secondary" onClick={wrappedClose}>
+            <CloseIcon />
+          </IconButton>
+          <IconButton color="primary" onClick={wrappedProceed} autoFocus>
+            <DoneIcon />
+          </IconButton>
         </DialogActions>
       </Dialog>
     </div>

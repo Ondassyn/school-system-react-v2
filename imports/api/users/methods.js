@@ -32,3 +32,29 @@ export const createRole = new ValidatedMethod({
     return Roles.createRole(role, { unlessExists: true });
   },
 });
+
+export const addUsersToRoles = new ValidatedMethod({
+  name: 'roles.addUsersToRoles',
+  mixins: [CallPromiseMixin],
+  validate: new SimpleSchema({
+    userId: { type: String },
+    role: { type: String },
+  }).validator(),
+  checkLoggedInError,
+  run({ userId, role }) {
+    Roles.addUsersToRoles(userId, role, null);
+  },
+});
+
+export const userIsInRole = new ValidatedMethod({
+  name: 'roles.userIsInRole',
+  mixins: [CallPromiseMixin],
+  validate: new SimpleSchema({
+    userId: { type: String },
+    role: { type: String },
+  }).validator(),
+  checkLoggedInError,
+  run({ userId, role }) {
+    return Roles.userIsInRole(userId, role);
+  },
+});

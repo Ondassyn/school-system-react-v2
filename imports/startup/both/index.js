@@ -17,3 +17,6 @@ import '../../api/bts/results/methods';
 
 import '../../api/bts/ratings/ratings';
 import '../../api/bts/ratings/methods';
+
+import '../../api/bts/settings/settings';
+import '../../api/bts/settings/methods';

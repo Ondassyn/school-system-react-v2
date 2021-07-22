@@ -38,7 +38,7 @@ export function SnackbarProvider({ children }) {
       {children}
       {alerts.map(alert => (
         <Snackbar
-          key={alert}
+          key={Math.random()}
           message={alert.message}
           severity={alert.severity}
         />

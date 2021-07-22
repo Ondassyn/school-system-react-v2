@@ -23,6 +23,7 @@ import BtsKeys from '../pages/BTS/Keys/Keys';
 import BtsResults from '../pages/BTS/Results/Results';
 import BtsRatings from '../pages/BTS/Ratings/Ratings';
 import BtsMain from '../pages/BTS/Main/Main';
+import BtsSettings from '../pages/BTS/Settings/Settings';
 
 // import Spinner
 import Spinner from '../components/Spinner';
@@ -99,6 +100,13 @@ const App = props => {
                     exact
                     path="/bts/ratings"
                     component={BtsRatings}
+                    {...props}
+                  />
+
+                  <PropsRoute
+                    exact
+                    path="/bts/settings"
+                    component={BtsSettings}
                     {...props}
                   />
 
