@@ -17,10 +17,13 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import Button from '@material-ui/core/Button';
+
+import { useTranslation } from 'react-i18next';
 
 import { Router, Route, Link } from 'react-router-dom';
 
-import './Drawer.scss';
+import LanguageSelector from './LanguageSelector/LanguageSelector';
 
 const drawerWidth = 240;
 
@@ -44,8 +47,7 @@ const useStyles = makeStyles(theme => ({
     }),
   },
   menuButton: {
-    // marginRight: theme.spacing(1.5),
-    // marginRight: 36,
+    marginRight: 36,
   },
   hide: {
     display: 'none',
@@ -55,15 +57,14 @@ const useStyles = makeStyles(theme => ({
     flexShrink: 0,
     whiteSpace: 'nowrap',
   },
-  drawerOpen: props => ({
+  drawerOpen: {
     width: drawerWidth,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    paddingTop: props.navbarHeight + 'px',
-  }),
-  drawerClose: props => ({
+  },
+  drawerClose: {
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -73,16 +74,14 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up('sm')]: {
       width: theme.spacing(9) + 1,
     },
-    paddingTop: props.navbarHeight + 'px',
-  }),
+  },
   toolbar: {
     display: 'flex',
     alignItems: 'center',
-    // justifyContent: 'flex-end',
     justifyContent: 'space-between',
-    padding: theme.spacing(0, 2),
+    padding: theme.spacing(0, 1, 0, 2),
     // necessary for content to be below app bar
-    // ...theme.mixins.toolbar
+    ...theme.mixins.toolbar,
   },
   content: {
     flexGrow: 1,
@@ -90,14 +89,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MiniDrawer({
-  children,
-  navbarHeight,
-  mainTitle,
-  items,
-}) {
-  const classes = useStyles({ navbarHeight });
+export default function MiniDrawer({ children, mainTitle, items }) {
+  const classes = useStyles();
   const theme = useTheme();
+  const [t, i18n] = useTranslation();
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(-1);
 
@@ -112,65 +107,14 @@ export default function MiniDrawer({
   return (
     <div className={classes.root}>
       <CssBaseline />
-      {/* <AppBar
+      <AppBar
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
         })}
       >
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton, {
-              [classes.hide]: open,
-            })}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Mini variant drawer
-          </Typography>
-        </Toolbar>{' '}
-      </AppBar> */}
-      <Drawer
-        variant="permanent"
-        className={clsx(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
-        })}
-        classes={{
-          paper: clsx({
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
-          }),
-        }}
-      >
-        <div className={classes.toolbar}>
-          {open && (
-            <Typography
-              id="drawer-title"
-              style={{ textDecoration: 'none' }}
-              onClick={() => setSelected(-1)}
-              component={Link}
-              to={mainTitle.link}
-              variant="h6"
-              noWrap
-            >
-              {mainTitle.title}
-            </Typography>
-          )}
-          {open ? (
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'rtl' ? (
-                <ChevronRightIcon />
-              ) : (
-                <ChevronLeftIcon />
-              )}
-            </IconButton>
-          ) : (
+          {!!items?.length && (
             <IconButton
               color="inherit"
               aria-label="open drawer"
@@ -183,35 +127,83 @@ export default function MiniDrawer({
               <MenuIcon />
             </IconButton>
           )}
-        </div>
-        <Divider />
-        <List>
-          {items.map((item, index) => (
-            <ListItem
-              button
-              key={item.title}
-              component={Link}
-              to={item.link}
-              onClick={() => setSelected(index)}
-              selected={selected === index}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.title} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {/* {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))} */}
-        </List>
-      </Drawer>
+          <Typography variant="h6" noWrap>
+            TESTS.BILIK
+          </Typography>
+          <LanguageSelector i18n={i18n} />
+        </Toolbar>
+      </AppBar>
+      {!!items?.length && (
+        <Drawer
+          variant="permanent"
+          className={clsx(classes.drawer, {
+            [classes.drawerOpen]: open,
+            [classes.drawerClose]: !open,
+          })}
+          classes={{
+            paper: clsx({
+              [classes.drawerOpen]: open,
+              [classes.drawerClose]: !open,
+            }),
+          }}
+        >
+          <div className={classes.toolbar}>
+            {open && (
+              <Button>
+                <Typography
+                  id="drawer-title"
+                  style={{ textDecoration: 'none' }}
+                  onClick={() => setSelected(-1)}
+                  component={Link}
+                  to={mainTitle.link}
+                  variant="h6"
+                  noWrap
+                >
+                  {mainTitle.title}
+                </Typography>
+              </Button>
+            )}
+            {open ? (
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === 'rtl' ? (
+                  <ChevronRightIcon />
+                ) : (
+                  <ChevronLeftIcon />
+                )}
+              </IconButton>
+            ) : (
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                className={clsx(classes.menuButton, {
+                  [classes.hide]: open,
+                })}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
+          </div>
+          <Divider />
+          <List>
+            {items.map((item, index) => (
+              <ListItem
+                button
+                key={item.title}
+                component={Link}
+                to={item.link}
+                onClick={() => setSelected(index)}
+                selected={selected === index}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.title} />
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+        </Drawer>
+      )}
       <main className={classes.content}>
         <div className={classes.toolbar} />
         {children}

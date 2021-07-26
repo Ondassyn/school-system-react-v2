@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Switch } from 'react-router-dom';
 
 // import navbar
 import Navbar from '../components/Navbar';
+import AppBar from '../components/AppBar/AppBar';
 
 // import routes
 import Landing from '../pages/Landing';
@@ -48,11 +49,11 @@ const App = props => {
         <SnackbarProvider>
           <Router>
             <div>
-              <PropsRoute
-                component={Navbar}
+              {/* <PropsRoute
+                component={AppBar}
                 {...props}
                 setHeight={setNavbarHeight}
-              />
+              /> */}
               {props.loggingIn && <Spinner />}
               <DrawerProvider navbarHeight={navbarHeight}>
                 <Switch>

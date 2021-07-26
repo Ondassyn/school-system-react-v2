@@ -41,14 +41,6 @@ export function DrawerProvider({ children, navbarHeight }) {
         mainTitle={mainTitle}
         items={items}
       />
-      {/* {children} */}
-      {/* {alerts.map(alert => (
-          <Snackbar
-            key={alert}
-            message={alert.message}
-            severity={alert.severity}
-          />
-        ))} */}
     </DrawerContext.Provider>
   );
 }

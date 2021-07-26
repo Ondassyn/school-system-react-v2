@@ -34,7 +34,7 @@ const SearchBar = () => (
 
 const LoggedInNav = () => (
   <>
-    <SearchBar key="searchbar" />
+    {/* <SearchBar key="searchbar" /> */}
     <li className="nav-item">
       <NavLink to="/profile">
         <button type="button" className="dropdown-item">
@@ -92,7 +92,7 @@ const Navbar = ({ loggedIn, setHeight, i18n }) => {
     <nav ref={ref} className="navbar navbar-expand-lg navbar-light bg-light">
       <Status loggedIn={loggedIn} />
       <span className="navbar-brand" href="#">
-        <NavLink to="/">Brand</NavLink>
+        <NavLink to="/">TESTS.BILIK</NavLink>
       </span>
       <button
         className="navbar-toggler"
