@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Meteor } from 'meteor/meteor';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -18,10 +19,15 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import Button from '@material-ui/core/Button';
+import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
+
+import Popper from '../Popper/Popper';
+
+import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 
 import { useTranslation } from 'react-i18next';
 
-import { Router, Route, Link } from 'react-router-dom';
+import { Router, Route, Link, useHistory } from 'react-router-dom';
 
 import LanguageSelector from './LanguageSelector/LanguageSelector';
 
@@ -87,68 +93,159 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
+  mainToolbar: {
+    justifyContent: 'space-between',
+  },
+  mainTitle: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  toolbarItems: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  categories: {
+    display: 'flex',
+  },
 }));
 
 export default function MiniDrawer({ children, mainTitle, items }) {
   const classes = useStyles();
   const theme = useTheme();
+  const history = useHistory();
   const [t, i18n] = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const [selected, setSelected] = useState(-1);
 
+  const [open, setOpen] = React.useState(false);
+  const anchorRef = React.useRef(null);
+
+  const handleToggle = () => {
+    setOpen(prevOpen => !prevOpen);
+  };
+
+  const handleClose = event => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  function handleListKeyDown(event) {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      setOpen(false);
+    }
+  }
+
+  // return focus to the button when we transitioned from !open -> open
+  const prevOpen = React.useRef(open);
+  React.useEffect(() => {
+    if (prevOpen.current === true && open === false) {
+      anchorRef.current.focus();
+    }
+
+    prevOpen.current = open;
+  }, [open]);
+
   const handleDrawerOpen = () => {
-    setOpen(true);
+    setDrawerIsOpen(true);
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    setDrawerIsOpen(false);
   };
 
   return (
     <div className={classes.root}>
       <CssBaseline />
+
       <AppBar
         position="fixed"
         className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
+          [classes.appBarShift]: drawerIsOpen,
         })}
       >
-        <Toolbar>
-          {!!items?.length && (
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              className={clsx(classes.menuButton, {
-                [classes.hide]: open,
-              })}
-            >
-              <MenuIcon />
-            </IconButton>
+        <Toolbar className={classes.mainToolbar}>
+          <div className={classes.mainTitle}>
+            {!!items?.length && (
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                className={clsx(classes.menuButton, {
+                  [classes.hide]: drawerIsOpen,
+                })}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
+            <Button color="inherit" onClick={() => history.push('/')}>
+              <Typography variant="h6" noWrap>
+                TESTS.BILIK
+              </Typography>
+            </Button>
+          </div>
+          {Meteor.user() && (
+            <div className={classes.categories}>
+              <Button color="inherit" onClick={() => history.push('/teachers')}>
+                <Typography>{t('teachers')}</Typography>
+              </Button>
+              <Button color="inherit" onClick={() => history.push('/students')}>
+                <Typography>{t('students')}</Typography>
+              </Button>
+              <Popper
+                title={t('exams')}
+                items={[{ title: t('bts'), link: '/bts' }]}
+              />
+            </div>
           )}
-          <Typography variant="h6" noWrap>
-            TESTS.BILIK
-          </Typography>
-          <LanguageSelector i18n={i18n} />
+          <div className={classes.toolbarItems}>
+            <LanguageSelector i18n={i18n} />
+
+            {Meteor.user() && (
+              <IconButton
+                color="inherit"
+                onClick={() => history.push('/settings')}
+              >
+                <SettingsOutlinedIcon />
+              </IconButton>
+            )}
+            {Meteor.user() ? (
+              <IconButton color="inherit" onClick={() => Meteor.logout()}>
+                <ExitToAppOutlinedIcon />
+              </IconButton>
+            ) : (
+              <div>
+                <Button color="inherit" onClick={() => history.push('/login')}>
+                  {t('login')}
+                </Button>
+                <Button color="inherit" onClick={() => history.push('/signup')}>
+                  {t('signup')}
+                </Button>
+              </div>
+            )}
+          </div>
         </Toolbar>
       </AppBar>
       {!!items?.length && (
         <Drawer
           variant="permanent"
           className={clsx(classes.drawer, {
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
+            [classes.drawerOpen]: drawerIsOpen,
+            [classes.drawerClose]: !drawerIsOpen,
           })}
           classes={{
             paper: clsx({
-              [classes.drawerOpen]: open,
-              [classes.drawerClose]: !open,
+              [classes.drawerOpen]: drawerIsOpen,
+              [classes.drawerClose]: !drawerIsOpen,
             }),
           }}
         >
           <div className={classes.toolbar}>
-            {open && (
+            {drawerIsOpen && (
               <Button>
                 <Typography
                   id="drawer-title"
@@ -163,25 +260,13 @@ export default function MiniDrawer({ children, mainTitle, items }) {
                 </Typography>
               </Button>
             )}
-            {open ? (
+            {drawerIsOpen && (
               <IconButton onClick={handleDrawerClose}>
                 {theme.direction === 'rtl' ? (
                   <ChevronRightIcon />
                 ) : (
                   <ChevronLeftIcon />
                 )}
-              </IconButton>
-            ) : (
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                edge="start"
-                className={clsx(classes.menuButton, {
-                  [classes.hide]: open,
-                })}
-              >
-                <MenuIcon />
               </IconButton>
             )}
           </div>

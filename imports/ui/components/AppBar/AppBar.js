@@ -15,7 +15,6 @@ import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
-import LanguageSelector from './LanguageSelector/LanguageSelector';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles(theme => ({
@@ -199,7 +198,6 @@ export default function PrimarySearchAppBar({ loggedIn, setHeight }) {
             />
           </div> */}
           <div className={classes.grow} />
-          <LanguageSelector i18n={i18n} />
 
           <div className={classes.sectionDesktop}>
             <IconButton aria-label="show 4 new mails" color="inherit">

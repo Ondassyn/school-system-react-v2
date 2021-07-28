@@ -31,7 +31,11 @@ import '../../api/schools/publications.js';
 
 // students api
 import '../../api/students/publications.js';
+import '../../api/students/methods.js';
 
 // btsSettings api
 import '../../api/bts/settings/methods.js';
 import '../../api/bts/settings/publications.js';
+
+import '../../api/idCounter/methods.js';
+import '../../api/idCounter/publications.js';

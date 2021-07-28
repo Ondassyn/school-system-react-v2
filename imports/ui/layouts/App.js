@@ -25,6 +25,7 @@ import BtsResults from '../pages/BTS/Results/Results';
 import BtsRatings from '../pages/BTS/Ratings/Ratings';
 import BtsMain from '../pages/BTS/Main/Main';
 import BtsSettings from '../pages/BTS/Settings/Settings';
+import Students from '../pages/Students/Main';
 
 // import Spinner
 import Spinner from '../components/Spinner';
@@ -66,7 +67,12 @@ const App = props => {
                     component={Profile}
                     {...props}
                   />
-
+                  <PropsRoute
+                    exact
+                    path="/students"
+                    component={Students}
+                    {...props}
+                  />
                   <PropsRoute
                     exact
                     path="/settings"

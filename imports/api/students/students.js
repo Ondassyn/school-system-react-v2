@@ -29,6 +29,21 @@ const Schema = new SimpleSchema({
   name: {
     type: String,
   },
+  languageGroup: {
+    type: String,
+  },
+  olympiad: {
+    type: String,
+    optional: true,
+  },
+  electiveGroup: {
+    type: String,
+    optional: true,
+  },
+  level: {
+    type: String,
+    optional: true,
+  },
 });
 
 // attach schema

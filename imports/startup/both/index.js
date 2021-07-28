@@ -20,3 +20,9 @@ import '../../api/bts/ratings/methods';
 
 import '../../api/bts/settings/settings';
 import '../../api/bts/settings/methods';
+
+import '../../api/students/students';
+import '../../api/students/methods';
+
+import '../../api/idCounter/idCounter';
+import '../../api/idCounter/methods';
