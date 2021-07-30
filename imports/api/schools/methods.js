@@ -10,8 +10,7 @@ import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 import { MethodHooks } from 'meteor/lacosta:method-hooks';
 import { CallPromiseMixin } from 'meteor/didericis:callpromise-mixin';
 
-import Students from './students.js';
-import IdCounter from '../idCounter/idCounter';
+import Schools from './schools.js';
 
 /** **************** Helpers **************** */
 
@@ -43,8 +42,8 @@ const checkLoggedInError = {
 //    return returnValue;
 //  };
 
-export const studentsGetDistinct = new ValidatedMethod({
-  name: 'students.getDistinct',
+export const schoolsGetDistinct = new ValidatedMethod({
+  name: 'schools.getDistinct',
   mixins,
   checkLoggedInError,
   validate: null,
@@ -56,7 +55,7 @@ export const studentsGetDistinct = new ValidatedMethod({
     // }
 
     let distinctFieldValues = _.uniq(
-      Students.find(
+      Schools.find(
         {},
         {
           sort: { [fieldName]: 1 },
@@ -72,80 +71,65 @@ export const studentsGetDistinct = new ValidatedMethod({
   },
 });
 
-export const studentsInsert = new ValidatedMethod({
-  name: 'students.insert',
+export const schoolsInsert = new ValidatedMethod({
+  name: 'schools.insert',
   mixins: [CallPromiseMixin],
   validate: new SimpleSchema({
     schoolId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
-    studentId: SimpleSchema.oneOf(
-      { type: String, optional: true },
-      { type: SimpleSchema.Integer, optional: true }
-    ),
-    grade: SimpleSchema.oneOf(String, SimpleSchema.Integer),
-    division: {
+    shortName: {
       type: String,
     },
-    surname: {
-      type: String,
-    },
-    name: {
-      type: String,
-    },
-    languageGroup: {
-      type: String,
-    },
-    olympiad: {
+    fullName: {
       type: String,
       optional: true,
     },
-    electiveGroup: {
+    secondaryName: {
       type: String,
       optional: true,
     },
-    level: {
+    schoolType: {
+      type: String,
+    },
+    region: {
+      type: String,
+    },
+    userId: {
+      type: String,
+    },
+    oldSchoolId: {
       type: String,
       optional: true,
+    },
+    schoolAccount: {
+      type: String,
+    },
+    schoolPassword: {
+      type: String,
     },
   }).validator(),
   checkLoggedInError,
   run(toInsert) {
-    if (toInsert.studentId) {
-      const recordInDB = Students.findOne({
-        studentId: toInsert.studentId,
-      });
-
-      Students.update({ _id: recordInDB._id }, { $set: toInsert });
+    const recordInDB = Schools.findOne({
+      schoolId: toInsert.schoolId,
+    });
+    if (recordInDB) {
+      Schools.update({ _id: recordInDB._id }, { $set: toInsert });
       return recordInDB._id;
     } else {
-      let id = IdCounter.findOne().studentId + 1;
-      toInsert.studentId = id;
-      const keyId = Students.insert(toInsert);
-      IdCounter.update({ _id: 'counter' }, { $set: { studentId: id } });
+      const keyId = Schools.insert(toInsert);
       return keyId;
     }
   },
 });
 
-export const studentsDeleteByStudentId = new ValidatedMethod({
-  name: 'students.deleteByStudentId',
+export const schoolsDeleteBySchoolId = new ValidatedMethod({
+  name: 'schools.deleteBySchoolId',
   mixins: [CallPromiseMixin],
   validate: new SimpleSchema({
-    studentId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
+    schoolId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
   }).validator(),
   checkLoggedInError,
-  run({ studentId }) {
-    return Students.remove({ studentId });
-  },
-});
-
-export const studentsDeleteById = new ValidatedMethod({
-  name: 'students.deleteById',
-  mixins: [CallPromiseMixin],
-  validate: new SimpleSchema({
-    _id: { type: String },
-  }).validator(),
-  checkLoggedInError,
-  run({ _id }) {
-    return Students.remove({ _id });
+  run({ schoolId }) {
+    return Schools.remove({ schoolId });
   },
 });

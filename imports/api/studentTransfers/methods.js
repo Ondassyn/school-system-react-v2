@@ -10,8 +10,7 @@ import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 import { MethodHooks } from 'meteor/lacosta:method-hooks';
 import { CallPromiseMixin } from 'meteor/didericis:callpromise-mixin';
 
-import Students from './students.js';
-import IdCounter from '../idCounter/idCounter';
+import StudentTransfers from './studentTransfers.js';
 
 /** **************** Helpers **************** */
 
@@ -43,8 +42,8 @@ const checkLoggedInError = {
 //    return returnValue;
 //  };
 
-export const studentsGetDistinct = new ValidatedMethod({
-  name: 'students.getDistinct',
+export const studentTransfersGetDistinct = new ValidatedMethod({
+  name: 'studentTransfers.getDistinct',
   mixins,
   checkLoggedInError,
   validate: null,
@@ -56,7 +55,7 @@ export const studentsGetDistinct = new ValidatedMethod({
     // }
 
     let distinctFieldValues = _.uniq(
-      Students.find(
+      StudentTransfers.find(
         {},
         {
           sort: { [fieldName]: 1 },
@@ -72,14 +71,14 @@ export const studentsGetDistinct = new ValidatedMethod({
   },
 });
 
-export const studentsInsert = new ValidatedMethod({
-  name: 'students.insert',
+export const studentTransfersInsert = new ValidatedMethod({
+  name: 'studentTransfers.insert',
   mixins: [CallPromiseMixin],
   validate: new SimpleSchema({
     schoolId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
     studentId: SimpleSchema.oneOf(
-      { type: String, optional: true },
-      { type: SimpleSchema.Integer, optional: true }
+      { type: String },
+      { type: SimpleSchema.Integer }
     ),
     grade: SimpleSchema.oneOf(String, SimpleSchema.Integer),
     division: {
@@ -109,43 +108,28 @@ export const studentsInsert = new ValidatedMethod({
   }).validator(),
   checkLoggedInError,
   run(toInsert) {
-    if (toInsert.studentId) {
-      const recordInDB = Students.findOne({
-        studentId: toInsert.studentId,
-      });
+    const recordInDB = StudentTransfers.findOne({
+      studentId: toInsert.studentId,
+    });
 
-      Students.update({ _id: recordInDB._id }, { $set: toInsert });
-      return recordInDB._id;
+    if (recordInDB) {
+      StudentTransfers.update({ _id: recordInDB._id }, { $set: toInsert });
+      return recordInDB.studentId;
     } else {
-      let id = IdCounter.findOne().studentId + 1;
-      toInsert.studentId = id;
-      const keyId = Students.insert(toInsert);
-      IdCounter.update({ _id: 'counter' }, { $set: { studentId: id } });
-      return keyId;
+      const keyId = StudentTransfers.insert(toInsert);
+      return toInsert.studentId;
     }
   },
 });
 
-export const studentsDeleteByStudentId = new ValidatedMethod({
-  name: 'students.deleteByStudentId',
+export const studentTransfersDeleteByStudentId = new ValidatedMethod({
+  name: 'studentTransfers.deleteByStudentId',
   mixins: [CallPromiseMixin],
   validate: new SimpleSchema({
     studentId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
   }).validator(),
   checkLoggedInError,
   run({ studentId }) {
-    return Students.remove({ studentId });
-  },
-});
-
-export const studentsDeleteById = new ValidatedMethod({
-  name: 'students.deleteById',
-  mixins: [CallPromiseMixin],
-  validate: new SimpleSchema({
-    _id: { type: String },
-  }).validator(),
-  checkLoggedInError,
-  run({ _id }) {
-    return Students.remove({ _id });
+    return StudentTransfers.remove({ studentId });
   },
 });

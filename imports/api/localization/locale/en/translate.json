@@ -40,6 +40,17 @@
         "actions": "Actions",
         "export_csv": "Export as CSV",
         "export": "Export",
+        "transfer_confirmation" : "Transfer this person?",
+        "search" : "Search",
+        "rows": "rows",
+        "rows_per_page": "Rows per page: ",
+        "first_page": "First page",
+        "previous_page": "Previous page",
+        "next_page": "Next page",
+        "last_page": "Last page",
+        "filter" : "Filter",
+        "save" : "Save",
+        "schools" : "Schools",
 
         "paragraph": "Introduction",
         "author": {

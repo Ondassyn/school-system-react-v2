@@ -10,20 +10,9 @@ import Drawer from '../../ui/components/Drawer/Drawer';
 
 export const DrawerContext = createContext();
 
-export function DrawerProvider({ children, navbarHeight }) {
+export function DrawerProvider({ children }) {
   const [items, setItems] = useState([]);
   const [mainTitle, setMainTitle] = useState('');
-
-  // const activeAlertIds = alerts.join(',');
-  // useEffect(() => {
-  //   if (activeAlertIds.length > 0) {
-  //     const timer = setTimeout(
-  //       () => setAlerts(alerts => alerts.slice(0, alerts.length - 1)),
-  //       AUTO_DISMISS
-  //     );
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [activeAlertIds]);
 
   const setDrawer = useCallback(content => setItems(content), []);
   const setDrawerTitle = useCallback(content => setMainTitle(content), []);
@@ -35,12 +24,7 @@ export function DrawerProvider({ children, navbarHeight }) {
 
   return (
     <DrawerContext.Provider value={value}>
-      <Drawer
-        children={children}
-        navbarHeight={navbarHeight}
-        mainTitle={mainTitle}
-        items={items}
-      />
+      <Drawer children={children} mainTitle={mainTitle} items={items} />
     </DrawerContext.Provider>
   );
 }

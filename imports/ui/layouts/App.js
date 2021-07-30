@@ -26,6 +26,7 @@ import BtsRatings from '../pages/BTS/Ratings/Ratings';
 import BtsMain from '../pages/BTS/Main/Main';
 import BtsSettings from '../pages/BTS/Settings/Settings';
 import Students from '../pages/Students/Main';
+import Schools from '../pages/Schools/Main';
 
 // import Spinner
 import Spinner from '../components/Spinner';
@@ -42,8 +43,6 @@ import i18n from './../../api/localization/i18n';
 import Settings from '../pages/Settings/Settings';
 
 const App = props => {
-  const [navbarHeight, setNavbarHeight] = useState(0);
-
   return (
     <I18nextProvider i18n={i18n}>
       <DialogProvider>
@@ -56,7 +55,7 @@ const App = props => {
                 setHeight={setNavbarHeight}
               /> */}
               {props.loggingIn && <Spinner />}
-              <DrawerProvider navbarHeight={navbarHeight}>
+              <DrawerProvider>
                 <Switch>
                   <PropsRoute exact path="/" component={Landing} {...props} />
                   <PropsRoute path="/login" component={Login} {...props} />
@@ -65,6 +64,12 @@ const App = props => {
                     exact
                     path="/profile"
                     component={Profile}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/schools"
+                    component={Schools}
                     {...props}
                   />
                   <PropsRoute

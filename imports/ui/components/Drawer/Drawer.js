@@ -190,6 +190,9 @@ export default function MiniDrawer({ children, mainTitle, items }) {
           </div>
           {Meteor.user() && (
             <div className={classes.categories}>
+              <Button color="inherit" onClick={() => history.push('/schools')}>
+                <Typography>{t('schools')}</Typography>
+              </Button>
               <Button color="inherit" onClick={() => history.push('/teachers')}>
                 <Typography>{t('teachers')}</Typography>
               </Button>

@@ -27,11 +27,15 @@ import '../../api/bts/ratings/methods.js';
 import '../../api/bts/ratings/publications.js';
 
 // schools api
+import '../../api/schools/methods.js';
 import '../../api/schools/publications.js';
 
 // students api
 import '../../api/students/publications.js';
 import '../../api/students/methods.js';
+
+import '../../api/studentTransfers/publications.js';
+import '../../api/studentTransfers/methods.js';
 
 // btsSettings api
 import '../../api/bts/settings/methods.js';
