@@ -10,11 +10,37 @@ const Schools = new Mongo.Collection('schools');
 const Schema = new SimpleSchema({
   _id: {
     type: String,
+    optional: true,
   },
-  schoolId: {
+  schoolId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
+  shortName: {
     type: String,
   },
-  shortName: {
+  fullName: {
+    type: String,
+    optional: true,
+  },
+  secondaryName: {
+    type: String,
+    optional: true,
+  },
+  schoolType: {
+    type: String,
+  },
+  region: {
+    type: String,
+  },
+  userId: {
+    type: String,
+  },
+  oldSchoolId: {
+    type: String,
+    optional: true,
+  },
+  schoolAccount: {
+    type: String,
+  },
+  schoolPassword: {
     type: String,
   },
 });

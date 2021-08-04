@@ -22,7 +22,11 @@ import {
   studentsInsert,
 } from '../../../api/students/methods';
 import useSnackbars from '../../../api/notifications/snackbarConsumer';
-import { studentTransfersInsert } from '../../../api/studentTransfers/methods';
+import {
+  studentTransfersDeleteByStudentId,
+  studentTransfersInsert,
+} from '../../../api/studentTransfers/methods';
+import StudentTransfers from '../../../api/studentTransfers/studentTransfers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Main = props => {
+const Transfers = props => {
   const classes = useStyles();
   const [t, i18n] = useTranslation();
   const { setDrawer, setDrawerTitle } = useDrawer();
@@ -78,7 +82,7 @@ const Main = props => {
   if (!Meteor.userId()) return null;
 
   const lookupParser = fieldName => {
-    return Meteor.apply('students.getDistinct', [fieldName], {
+    return Meteor.apply('studentTransfers.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       return { ...obj, [item]: item };
@@ -86,7 +90,7 @@ const Main = props => {
   };
 
   const lookupSchoolParser = fieldName => {
-    return Meteor.apply('students.getDistinct', [fieldName], {
+    return Meteor.apply('studentTransfers.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       let school = props.schools.find(e => e.schoolId === item);
@@ -100,18 +104,15 @@ const Main = props => {
       title: t('school'),
       field: 'schoolName',
       lookup: lookupSchoolParser('schoolId'),
-      editable: 'onAdd',
     },
     {
       title: t('student_id'),
       field: 'studentId',
-      editable: 'never',
     },
     {
       title: t('grade'),
       field: 'grade',
       lookup: lookupParser('grade'),
-      editable: 'onAdd',
     },
     {
       title: t('division'),
@@ -131,29 +132,14 @@ const Main = props => {
       field: 'languageGroup',
       lookup: lookupParser('languageGroup'),
     },
-    {
-      title: t('olympiad_subject'),
-      field: 'olympiad',
-      lookup: lookupParser('olympiad'),
-    },
-    {
-      title: t('elective_group'),
-      field: 'electiveGroup',
-      lookup: lookupParser('electiveGroup'),
-    },
-    {
-      title: t('level'),
-      field: 'level',
-      lookup: lookupParser('level'),
-    },
   ];
 
   return (
     <div>
       <MaterialTable
-        title={t('current_list').toUpperCase()}
+        title={t('transfer_list').toUpperCase()}
         columns={COLUMNS}
-        data={props.students.map(result => {
+        data={props.transfers.map(result => {
           let school = props.schools.find(e => e.schoolId === result.schoolId);
           let schoolName = school ? school.shortName : '';
           let returnObject = {
@@ -164,9 +150,6 @@ const Main = props => {
             surname: result.surname,
             name: result.name,
             languageGroup: result.languageGroup,
-            olympiad: result.olympiad,
-            electiveGroup: result.electiveGroup,
-            level: result.level,
           };
           return returnObject;
         })}
@@ -223,24 +206,67 @@ const Main = props => {
           //     onClick: (event, rowData) => alert('You saved ' + rowData.name),
           //   },
           rowData => ({
-            icon: TableIcons.TransferSecondary,
-            tooltip: t('transfer'),
+            icon: TableIcons.Delete,
+            tooltip: t('delete'),
             onClick: (event, rowData) =>
               showDialog({
-                text: t('transfer_confirmation'),
+                text: t('delete_confirmation'),
                 proceed: () => {
-                  let toInsert = { ...rowData };
-                  toInsert.schoolId = props.schools.find(
-                    e => e.shortName === toInsert.schoolName
-                  ).schoolId;
-                  delete toInsert['schoolName'];
-                  delete toInsert['tableData'];
+                  studentTransfersDeleteByStudentId.call(
+                    { studentId: rowData.studentId },
+                    (err, res) => {
+                      if (err)
+                        showSnackbar({
+                          message: err.message,
+                          severity: 'error',
+                        });
+                      else
+                        showSnackbar({
+                          message: t('done'),
+                          severity: 'success',
+                        });
+                    }
+                  );
+                },
+              }),
+          }),
+          {
+            icon: TableIcons.PersonAdd,
+            tooltip: t('add'),
+            disabled: !Roles.userIsInRole(Meteor.userId(), 'school'),
+            onClick: (event, rowData) =>
+              showDialog({
+                text: t('add_to_school_confirmation'),
+                proceed: () => {
+                  let student = props.transfers.find(
+                    e => e.studentId === rowData.studentId
+                  );
 
-                  studentTransfersInsert
-                    .callPromise(toInsert)
-                    .then(res => {
-                      studentsDeleteByStudentId.call(
-                        { studentId: res },
+                  if (!student) {
+                    showSnackbar({
+                      message: t('something_wrong'),
+                      severity: 'error',
+                    });
+                    return;
+                  }
+
+                  const school = props.schools.find(
+                    e => e.userId === Meteor.userId()
+                  );
+                  if (!school) {
+                    showSnackbar({
+                      message: t('something_wrong'),
+                      severity: 'error',
+                    });
+                    return;
+                  }
+
+                  student.schoolId = school.schoolId;
+                  studentsInsert
+                    .callPromise(student)
+                    .then(res =>
+                      studentTransfersDeleteByStudentId.call(
+                        { studentId: student.studentId },
                         (err, res) => {
                           if (err)
                             showSnackbar({
@@ -253,81 +279,15 @@ const Main = props => {
                               severity: 'success',
                             });
                         }
-                      );
-                    })
+                      )
+                    )
                     .catch(err =>
-                      showSnackbar({
-                        message: err.message,
-                        severity: 'error',
-                      })
+                      showSnackbar({ message: err.message, severity: 'error' })
                     );
                 },
               }),
-          }),
-          //   {
-          //     icon: TableIcons.Add,
-          //     tooltip: t('add'),
-          //     isFreeAction: true,
-          //     onClick: event => alert('You want to add a new row'),
-          //   },
+          },
         ]}
-        editable={{
-          onRowAdd: newData =>
-            new Promise((resolve, reject) => {
-              newData.schoolId = props.schools.find(
-                e => e.shortName === newData.schoolName
-              ).schoolId;
-              delete newData['schoolName'];
-
-              setTimeout(() => {
-                studentsInsert.call(newData, (err, res) => {
-                  if (err) {
-                    showSnackbar({ message: err.message, severity: 'error' });
-                    reject();
-                  } else {
-                    showSnackbar({ message: t('done'), severity: 'success' });
-                    resolve();
-                  }
-                });
-              }, 500);
-            }),
-          onRowUpdate: (newData, oldData) =>
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                newData.schoolId = props.schools.find(
-                  e => e.shortName === newData.schoolName
-                ).schoolId;
-                delete newData['schoolName'];
-                console.log(newData);
-                studentsInsert.call(newData, (err, res) => {
-                  if (err) {
-                    showSnackbar({ message: err.message, severity: 'error' });
-                    reject();
-                  } else {
-                    showSnackbar({ message: t('done'), severity: 'success' });
-                    resolve();
-                  }
-                });
-              }, 500);
-            }),
-          // onRowDelete: oldData =>
-          //   new Promise((resolve, reject) => {
-          //     setTimeout(() => {
-          //       studentsDeleteByStudentId.call(
-          //         { studentId: oldData.studentId },
-          //         (err, res) => {
-          //           if (err) {
-          //             showSnackbar({ message: err.message, severity: 'error' });
-          //             reject();
-          //           } else {
-          //             showSnackbar({ message: t('done'), severity: 'success' });
-          //             resolve();
-          //           }
-          //         }
-          //       );
-          //     }, 500);
-          //   }),
-        }}
       />
     </div>
   );
@@ -345,15 +305,12 @@ export default withTracker(props => {
   }
   const students = Students.find().fetch();
 
-  const subjectsSub = Meteor.subscribe('subjects.all');
-  const subjects = Subjects.find().fetch();
-
-  const idCounterSub = Meteor.subscribe('idCounter.all');
-  const studentTransfers = Meteor.subscribe('studentTransfers.all');
+  const transfersSub = Meteor.subscribe('studentTransfers.all');
+  const transfers = StudentTransfers.find().fetch();
 
   return {
     students,
-    subjects,
     schools,
+    transfers,
   };
-})(Main);
+})(Transfers);

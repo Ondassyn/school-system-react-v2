@@ -10,6 +10,7 @@ import Subjects from '../../../api/subjects/subjects';
 import TableIcons from '../../components/MaterialTable/TableIcons';
 import { Tooltip } from '@material-ui/core';
 import { MTableToolbar } from 'material-table';
+import Restricted from '../../components/Restricted/Restricted';
 
 import useDrawer from '../../../api/drawer/drawerConsumer';
 import useDialogs from '../../../api/dialogs/dialogConsumer';
@@ -51,9 +52,20 @@ const Main = props => {
   const { showDialog } = useDialogs();
 
   useEffect(() => {
+    if (!Meteor.userId()) props.history.push('/signin');
+  });
+
+  useEffect(() => {
     setDrawer([]);
     setDrawerTitle('');
   }, [i18n.language]);
+
+  if (!Meteor.userId() || !Roles.userIsInRole(Meteor.userId(), 'admin'))
+    return (
+      <div>
+        <Restricted />
+      </div>
+    );
 
   const lookupParser = fieldName => {
     return Meteor.apply('schools.getDistinct', [fieldName], {
@@ -111,7 +123,7 @@ const Main = props => {
   return (
     <div>
       <MaterialTable
-        title={t('students').toUpperCase()}
+        title={t('schools').toUpperCase()}
         columns={COLUMNS}
         data={props.schools}
         icons={TableIcons}
@@ -148,7 +160,7 @@ const Main = props => {
             editRow: {
               deleteText: t('delete_confirmation'),
               cancelTooltip: t('cancel'),
-              saveTooltip: t('save'),
+              saveTooltip: t('confirm'),
             },
           },
           pagination: {
@@ -221,10 +233,16 @@ const Main = props => {
               setTimeout(() => {
                 schoolsInsert.call(newData, (err, res) => {
                   if (err) {
-                    showSnackbar({ message: err.message, severity: 'error' });
+                    showSnackbar({
+                      message: err.message,
+                      severity: 'error',
+                    });
                     reject();
                   } else {
-                    showSnackbar({ message: t('done'), severity: 'success' });
+                    showSnackbar({
+                      message: t('done'),
+                      severity: 'success',
+                    });
                     resolve();
                   }
                 });
@@ -235,10 +253,16 @@ const Main = props => {
               setTimeout(() => {
                 schoolsInsert.call(newData, (err, res) => {
                   if (err) {
-                    showSnackbar({ message: err.message, severity: 'error' });
+                    showSnackbar({
+                      message: err.message,
+                      severity: 'error',
+                    });
                     reject();
                   } else {
-                    showSnackbar({ message: t('done'), severity: 'success' });
+                    showSnackbar({
+                      message: t('done'),
+                      severity: 'success',
+                    });
                     resolve();
                   }
                 });
@@ -251,10 +275,16 @@ const Main = props => {
                   { schoolId: oldData.schoolId },
                   (err, res) => {
                     if (err) {
-                      showSnackbar({ message: err.message, severity: 'error' });
+                      showSnackbar({
+                        message: err.message,
+                        severity: 'error',
+                      });
                       reject();
                     } else {
-                      showSnackbar({ message: t('done'), severity: 'success' });
+                      showSnackbar({
+                        message: t('done'),
+                        severity: 'success',
+                      });
                       resolve();
                     }
                   }

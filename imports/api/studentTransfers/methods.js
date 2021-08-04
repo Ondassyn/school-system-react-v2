@@ -75,6 +75,10 @@ export const studentTransfersInsert = new ValidatedMethod({
   name: 'studentTransfers.insert',
   mixins: [CallPromiseMixin],
   validate: new SimpleSchema({
+    _id: {
+      type: String,
+      optional: true,
+    },
     schoolId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
     studentId: SimpleSchema.oneOf(
       { type: String },

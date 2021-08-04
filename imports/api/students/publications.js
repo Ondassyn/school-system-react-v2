@@ -13,7 +13,7 @@ if (Meteor.isServer) {
   });
 
   Meteor.publish('students.school', function(schoolId) {
-    if (Roles.userIsInRole(this.userId, 'admin')) {
+    if (Roles.userIsInRole(this.userId, 'school')) {
       return Students.find({ schoolId });
     }
     return this.ready();

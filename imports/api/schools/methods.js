@@ -75,6 +75,10 @@ export const schoolsInsert = new ValidatedMethod({
   name: 'schools.insert',
   mixins: [CallPromiseMixin],
   validate: new SimpleSchema({
+    _id: {
+      type: String,
+      optional: true,
+    },
     schoolId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
     shortName: {
       type: String,

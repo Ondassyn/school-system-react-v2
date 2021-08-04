@@ -76,6 +76,10 @@ export const studentsInsert = new ValidatedMethod({
   name: 'students.insert',
   mixins: [CallPromiseMixin],
   validate: new SimpleSchema({
+    _id: {
+      type: String,
+      optional: true,
+    },
     schoolId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
     studentId: SimpleSchema.oneOf(
       { type: String, optional: true },
@@ -114,8 +118,13 @@ export const studentsInsert = new ValidatedMethod({
         studentId: toInsert.studentId,
       });
 
-      Students.update({ _id: recordInDB._id }, { $set: toInsert });
-      return recordInDB._id;
+      if (recordInDB) {
+        Students.update({ _id: recordInDB._id }, { $set: toInsert });
+        return recordInDB._id;
+      } else {
+        const keyId = Students.insert(toInsert);
+        return keyId;
+      }
     } else {
       let id = IdCounter.findOne().studentId + 1;
       toInsert.studentId = id;

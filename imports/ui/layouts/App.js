@@ -27,6 +27,7 @@ import BtsMain from '../pages/BTS/Main/Main';
 import BtsSettings from '../pages/BTS/Settings/Settings';
 import Students from '../pages/Students/Main';
 import Schools from '../pages/Schools/Main';
+import StudentTransfers from '../pages/Students/Transfers';
 
 // import Spinner
 import Spinner from '../components/Spinner';
@@ -41,6 +42,8 @@ import { DrawerProvider } from '../../api/drawer/drawerProvider';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './../../api/localization/i18n';
 import Settings from '../pages/Settings/Settings';
+import SignIn from '../pages/SignIn/SignIn';
+import { getUserRoles } from '../../api/users/methods';
 
 const App = props => {
   return (
@@ -49,17 +52,13 @@ const App = props => {
         <SnackbarProvider>
           <Router>
             <div>
-              {/* <PropsRoute
-                component={AppBar}
-                {...props}
-                setHeight={setNavbarHeight}
-              /> */}
               {props.loggingIn && <Spinner />}
               <DrawerProvider>
                 <Switch>
                   <PropsRoute exact path="/" component={Landing} {...props} />
                   <PropsRoute path="/login" component={Login} {...props} />
                   <PropsRoute path="/signup" component={Signup} {...props} />
+                  <PropsRoute path="/signin" component={SignIn} {...props} />
                   <PropsRoute
                     exact
                     path="/profile"
@@ -76,6 +75,12 @@ const App = props => {
                     exact
                     path="/students"
                     component={Students}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/students/transfers"
+                    component={StudentTransfers}
                     {...props}
                   />
                   <PropsRoute
@@ -164,12 +169,18 @@ export default withTracker(() => {
   const loggedIn = !loggingIn && userReady;
   const currentYear = CurrentYear;
   const rolesSub = Meteor.subscribe('roles.all');
+  const rolesAssignmentSub = Meteor.subscribe('rolesAssignment.all');
+  let userRoles = [];
 
+  if (user) {
+    userRoles = Roles.getRolesForUser(user._id);
+  }
   return {
     loggingIn,
     userReady,
     loggedIn,
     currentYear,
     i18n,
+    userRole: userRoles[0],
   };
 })(App);

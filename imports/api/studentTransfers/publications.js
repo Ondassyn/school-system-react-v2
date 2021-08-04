@@ -6,7 +6,10 @@ import StudentTransfers from './studentTransfers';
 
 if (Meteor.isServer) {
   Meteor.publish('studentTransfers.all', function() {
-    if (Roles.userIsInRole(this.userId, 'admin')) {
+    if (
+      Roles.userIsInRole(this.userId, 'admin') ||
+      Roles.userIsInRole(this.userId, 'school')
+    ) {
       return StudentTransfers.find();
     }
     return this.ready();

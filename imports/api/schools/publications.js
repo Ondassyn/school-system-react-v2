@@ -6,9 +6,6 @@ import Schools from './schools.js';
 
 if (Meteor.isServer) {
   Meteor.publish('schools.all', function() {
-    if (Roles.userIsInRole(this.userId, 'admin')) {
-      return Schools.find();
-    }
-    return this.ready();
+    return Schools.find();
   });
 }

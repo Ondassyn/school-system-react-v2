@@ -11,6 +11,7 @@ import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 import { MethodHooks } from 'meteor/lacosta:method-hooks';
 import { CallPromiseMixin } from 'meteor/didericis:callpromise-mixin';
+import Schools from '../schools/schools';
 
 const mixins = [LoggedInMixin, MethodHooks, CallPromiseMixin];
 
@@ -56,5 +57,31 @@ export const userIsInRole = new ValidatedMethod({
   checkLoggedInError,
   run({ userId, role }) {
     return Roles.userIsInRole(userId, role);
+  },
+});
+
+export const addUserWithRole = new ValidatedMethod({
+  name: 'users.addUserWithRole',
+  mixins: [CallPromiseMixin],
+  validate: new SimpleSchema({
+    username: { type: String },
+    password: { type: String },
+    role: { type: String },
+    schoolId: { type: String, optional: true },
+  }).validator(),
+  checkLoggedInError,
+  run({ username, password, role, schoolId }) {
+    if (Meteor.isServer) {
+      const userId = Accounts.createUser({ username, password });
+      Roles.addUsersToRoles(userId, role, null);
+      if (schoolId) {
+        Schools.update(
+          { schoolId },
+          {
+            $set: { userId, schoolAccount: username, schoolPassword: password },
+          }
+        );
+      }
+    }
   },
 });

@@ -17,15 +17,19 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import TransferWithinAStationOutlinedIcon from '@material-ui/icons/TransferWithinAStationOutlined';
 import EditOutlined from '@material-ui/icons/EditOutlined';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 
 export default {
   // tableIcons
   Add: forwardRef((props, ref) => (
     <AddBox fontSize="large" color="primary" {...props} ref={ref} />
   )),
+  PersonAdd: forwardRef((props, ref) => <PersonAddIcon {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+  Delete: forwardRef((props, ref) => (
+    <DeleteOutline color="secondary" {...props} ref={ref} />
+  )),
   DetailPanel: forwardRef((props, ref) => (
     <ChevronRight {...props} ref={ref} />
   )),
@@ -44,6 +48,13 @@ export default {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
   Transfer: forwardRef((props, ref) => (
-    <TransferWithinAStationOutlinedIcon {...props} ref={ref} />
+    <TransferWithinAStationOutlinedIcon color="primary" {...props} ref={ref} />
+  )),
+  TransferSecondary: forwardRef((props, ref) => (
+    <TransferWithinAStationOutlinedIcon
+      color="secondary"
+      {...props}
+      ref={ref}
+    />
   )),
 };

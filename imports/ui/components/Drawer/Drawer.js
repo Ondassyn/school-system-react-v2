@@ -115,7 +115,7 @@ export default function MiniDrawer({ children, mainTitle, items }) {
   const history = useHistory();
   const [t, i18n] = useTranslation();
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
-  const [selected, setSelected] = useState(-1);
+  const [selected, setSelected] = useState(0);
 
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
@@ -190,9 +190,14 @@ export default function MiniDrawer({ children, mainTitle, items }) {
           </div>
           {Meteor.user() && (
             <div className={classes.categories}>
-              <Button color="inherit" onClick={() => history.push('/schools')}>
-                <Typography>{t('schools')}</Typography>
-              </Button>
+              {Roles.userIsInRole(Meteor.userId(), 'admin') && (
+                <Button
+                  color="inherit"
+                  onClick={() => history.push('/schools')}
+                >
+                  <Typography>{t('schools')}</Typography>
+                </Button>
+              )}
               <Button color="inherit" onClick={() => history.push('/teachers')}>
                 <Typography>{t('teachers')}</Typography>
               </Button>
@@ -208,7 +213,7 @@ export default function MiniDrawer({ children, mainTitle, items }) {
           <div className={classes.toolbarItems}>
             <LanguageSelector i18n={i18n} />
 
-            {Meteor.user() && (
+            {Roles.userIsInRole(Meteor.user(), 'admin') && (
               <IconButton
                 color="inherit"
                 onClick={() => history.push('/settings')}
@@ -221,14 +226,9 @@ export default function MiniDrawer({ children, mainTitle, items }) {
                 <ExitToAppOutlinedIcon />
               </IconButton>
             ) : (
-              <div>
-                <Button color="inherit" onClick={() => history.push('/login')}>
-                  {t('login')}
-                </Button>
-                <Button color="inherit" onClick={() => history.push('/signup')}>
-                  {t('signup')}
-                </Button>
-              </div>
+              <Button color="inherit" onClick={() => history.push('/signin')}>
+                {t('login')}
+              </Button>
             )}
           </div>
         </Toolbar>

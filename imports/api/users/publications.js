@@ -33,6 +33,10 @@ if (Meteor.isServer) {
     return Meteor.roles.find();
   });
 
+  Meteor.publish('rolesAssignment.all', function() {
+    return Meteor.roleAssignment.find();
+  });
+
   // example friends publication
   // Meteor.publish('users.friends', function() {
   //   if (this.userId) {
