@@ -119,14 +119,34 @@ const checkLoggedInError = {
 //   },
 // });
 
-// export const studentsDeleteByStudentId = new ValidatedMethod({
-//   name: 'students.deleteByStudentId',
-//   mixins: [CallPromiseMixin],
-//   validate: new SimpleSchema({
-//     studentId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
-//   }).validator(),
-//   checkLoggedInError,
-//   run({ studentId }) {
-//     return Students.remove({ studentId });
-//   },
-// });
+export const idCounterGetStudentId = new ValidatedMethod({
+  name: 'idCounter.getStudentId',
+  mixins: [CallPromiseMixin],
+  validate: null,
+  checkLoggedInError,
+  run() {
+    const id = IdCounter.findOne({ _id: 'counter' })?.studentId;
+    IdCounter.update({ _id: 'counter' }, { $set: { studentId: id + 1 } });
+    return id;
+  },
+});
+
+export const idCounterGetTeacherId = new ValidatedMethod({
+  name: 'idCounter.getTeacherId',
+  mixins: [CallPromiseMixin],
+  validate: null,
+  checkLoggedInError,
+  run() {
+    return IdCounter.findOne({ _id: 'counter' })?.teacherId;
+  },
+});
+
+export const idCounterIncrementTeacherId = new ValidatedMethod({
+  name: 'idCounter.incrementTeacherId',
+  mixins: [CallPromiseMixin],
+  validate: null,
+  checkLoggedInError,
+  run() {
+    IdCounter.update({ _id: 'counter' }, { $inc: { teacherId: 1 } });
+  },
+});

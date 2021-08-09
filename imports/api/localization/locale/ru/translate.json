@@ -71,7 +71,14 @@
         "no_permission" : "У Вас нет разрешения на просмотр этой страницы",
         "current_list" : "Текущий список",
         "transfer_list" : "Трансфер список",
-        "add_to_school_confirmation" : "Добавить этого ученика в Вашу школу?",
+        "add_to_school_confirmation" : "Добавить этого человека в Вашу школу?",
+        "teacher_id" : "ID учителя",
+        "subject" : "Предмет",
+        "academic_degree" : "Ученая степень",
+        "work_experience" : "Опыт работы",
+        "position" : "Должность",
+        "category" : "Категория",
+        "no_records" : "Нет данных для отображения",
 
         "paragraph": "Introduction",
         "author": {

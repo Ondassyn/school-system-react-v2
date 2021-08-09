@@ -3,7 +3,7 @@ import { userIsInRole } from '../../../api/users/methods';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import Students from '../../../api/students/students';
+import Teachers from '../../../api/teachers/teachers';
 import { Box, Grid, IconButton, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import Subjects from '../../../api/subjects/subjects';
@@ -18,15 +18,15 @@ import Schools from '../../../api/schools/schools';
 import TransferWithinAStationOutlinedIcon from '@material-ui/icons/TransferWithinAStationOutlined';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import {
-  studentsDeleteByStudentId,
-  studentsInsert,
-} from '../../../api/students/methods';
+  teachersDeleteByTeacherId,
+  teachersInsert,
+} from '../../../api/teachers/methods';
 import useSnackbars from '../../../api/notifications/snackbarConsumer';
 import {
-  studentTransfersDeleteByStudentId,
-  studentTransfersInsert,
-} from '../../../api/studentTransfers/methods';
-import StudentTransfers from '../../../api/studentTransfers/studentTransfers';
+  teacherTransfersDeleteByTeacherId,
+  teacherTransfersInsert,
+} from '../../../api/teacherTransfers/methods';
+import TeacherTransfers from '../../../api/teacherTransfers/teacherTransfers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,7 +50,7 @@ const Transfers = props => {
   const { showSnackbar } = useSnackbars();
   const { showDialog } = useDialogs();
 
-  const TITLE = 'students';
+  const TITLE = 'teachers';
 
   const DRAWER_TITLE = {
     title: t(TITLE).toUpperCase(),
@@ -82,7 +82,7 @@ const Transfers = props => {
   if (!Meteor.userId()) return null;
 
   const lookupParser = fieldName => {
-    return Meteor.apply('studentTransfers.getDistinct', [fieldName], {
+    return Meteor.apply('teacherTransfers.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       return { ...obj, [item]: item };
@@ -90,7 +90,7 @@ const Transfers = props => {
   };
 
   const lookupSchoolParser = fieldName => {
-    return Meteor.apply('studentTransfers.getDistinct', [fieldName], {
+    return Meteor.apply('teacherTransfers.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       let school = props.schools.find(e => e.schoolId === item);
@@ -99,25 +99,27 @@ const Transfers = props => {
     }, {});
   };
 
+  const lookupSubjectParser = fieldName => {
+    return Meteor.apply('teachers.getDistinct', [fieldName], {
+      returnStubValue: true,
+    }).reduce((obj, item) => {
+      let subject = props.subjects.find(e => e.subjectId === item);
+      let subjectName = subject ? subject[`name_${i18n.language}`] : '';
+      return { ...obj, [subjectName]: subjectName };
+    }, {});
+  };
+
   const COLUMNS = [
     {
       title: t('school'),
       field: 'schoolName',
       lookup: lookupSchoolParser('schoolId'),
+      editable: 'onAdd',
     },
     {
-      title: t('student_id'),
-      field: 'studentId',
-    },
-    {
-      title: t('grade'),
-      field: 'grade',
-      lookup: lookupParser('grade'),
-    },
-    {
-      title: t('division'),
-      field: 'division',
-      lookup: lookupParser('division'),
+      title: t('teacher_id'),
+      field: 'teacherId',
+      editable: 'never',
     },
     {
       title: t('surname'),
@@ -128,9 +130,33 @@ const Transfers = props => {
       field: 'name',
     },
     {
-      title: t('language_group'),
-      field: 'languageGroup',
-      lookup: lookupParser('languageGroup'),
+      title: t('subject'),
+      field: 'subjectName',
+      lookup: lookupSubjectParser('subjectId'),
+    },
+    {
+      title: t('academic_degree'),
+      field: 'academicDegree',
+      lookup: lookupParser('academicDegree'),
+    },
+    {
+      title: t('work_experience'),
+      field: 'workExperience',
+    },
+    {
+      title: t('position'),
+      field: 'position',
+      lookup: lookupParser('position'),
+    },
+    {
+      title: 'IELTS',
+      field: 'ielts',
+      lookup: lookupParser('ielts'),
+    },
+    {
+      title: t('category'),
+      field: 'category',
+      lookup: lookupParser('category'),
     },
   ];
 
@@ -142,14 +168,21 @@ const Transfers = props => {
         data={props.transfers.map(result => {
           let school = props.schools.find(e => e.schoolId === result.schoolId);
           let schoolName = school ? school.shortName : '';
+          let subject = props.subjects.find(
+            e => e.subjectId === result.subjectId
+          );
+          let subjectName = subject ? subject[`name_${i18n.language}`] : '';
           let returnObject = {
             schoolName,
-            studentId: result.studentId,
-            grade: result.grade,
-            division: result.division,
+            subjectName,
+            teacherId: result.teacherId,
             surname: result.surname,
             name: result.name,
-            languageGroup: result.languageGroup,
+            academicDegree: result.academicDegree,
+            workExperience: result.workExperience,
+            position: result.position,
+            ielts: result.ielts,
+            category: result.category,
           };
           return returnObject;
         })}
@@ -213,8 +246,8 @@ const Transfers = props => {
               showDialog({
                 text: t('delete_confirmation'),
                 proceed: () => {
-                  studentTransfersDeleteByStudentId.call(
-                    { studentId: rowData.studentId },
+                  teacherTransfersDeleteByTeacherId.call(
+                    { teacherId: rowData.teacherId },
                     (err, res) => {
                       if (err)
                         showSnackbar({
@@ -239,11 +272,11 @@ const Transfers = props => {
               showDialog({
                 text: t('add_to_school_confirmation'),
                 proceed: () => {
-                  let student = props.transfers.find(
-                    e => e.studentId === rowData.studentId
+                  let teacher = props.transfers.find(
+                    e => e.teacherId === rowData.teacherId
                   );
 
-                  if (!student) {
+                  if (!teacher) {
                     showSnackbar({
                       message: t('something_wrong'),
                       severity: 'error',
@@ -262,12 +295,12 @@ const Transfers = props => {
                     return;
                   }
 
-                  student.schoolId = school.schoolId;
-                  studentsInsert
-                    .callPromise(student)
+                  teacher.schoolId = school.schoolId;
+                  teachersInsert
+                    .callPromise(teacher)
                     .then(res =>
-                      studentTransfersDeleteByStudentId.call(
-                        { studentId: student.studentId },
+                      teacherTransfersDeleteByTeacherId.call(
+                        { teacherId: teacher.teacherId },
                         (err, res) => {
                           if (err)
                             showSnackbar({
@@ -299,19 +332,23 @@ export default withTracker(props => {
   const schools = Schools.find().fetch();
 
   if (Roles.userIsInRole(Meteor.userId(), 'admin')) {
-    Meteor.subscribe('students.all');
+    Meteor.subscribe('teachers.all');
   } else {
     const schoolId = schools.find(e => e.userId === Meteor.userId())?.schoolId;
-    Meteor.subscribe('students.school', schoolId);
+    Meteor.subscribe('teachers.school', schoolId);
   }
-  const students = Students.find().fetch();
+  const teachers = Teachers.find().fetch();
 
-  const transfersSub = Meteor.subscribe('studentTransfers.all');
-  const transfers = StudentTransfers.find().fetch();
+  const subjectsSub = Meteor.subscribe('subjects.all');
+  const subjects = Subjects.find().fetch();
+
+  const transfersSub = Meteor.subscribe('teacherTransfers.all');
+  const transfers = TeacherTransfers.find().fetch();
 
   return {
-    students,
+    teachers,
     schools,
+    subjects,
     transfers,
   };
 })(Transfers);

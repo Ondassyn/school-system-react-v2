@@ -71,7 +71,14 @@
         "no_permission" : "You don't have permission to view this page",
         "current_list" : "Current list",
         "transfer_list" : "Transfer list",
-        "add_to_school_confirmation" : "Add this student to your school?",
+        "add_to_school_confirmation" : "Add this person to your school?",
+        "teacher_id" : "Teacher ID",
+        "subject" : "Subject",
+        "academic_degree" : "Academic degree",
+        "work_experience" : "Work experience",
+        "position" : "Position",
+        "category" : "Category",
+        "no_records" : "No records to display",
 
         "paragraph": "Introduction",
         "author": {

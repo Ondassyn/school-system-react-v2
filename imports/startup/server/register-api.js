@@ -37,6 +37,13 @@ import '../../api/students/methods.js';
 import '../../api/studentTransfers/publications.js';
 import '../../api/studentTransfers/methods.js';
 
+// teachers api
+import '../../api/teachers/publications.js';
+import '../../api/teachers/methods.js';
+
+import '../../api/teacherTransfers/publications.js';
+import '../../api/teacherTransfers/methods.js';
+
 // btsSettings api
 import '../../api/bts/settings/methods.js';
 import '../../api/bts/settings/publications.js';

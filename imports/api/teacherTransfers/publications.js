@@ -2,22 +2,15 @@
 
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
-import Students from './students';
+import TeacherTransfers from './teacherTransfers';
 
 if (Meteor.isServer) {
-  Meteor.publish('students.all', function() {
-    if (Roles.userIsInRole(this.userId, 'admin')) {
-      return Students.find();
-    }
-    return this.ready();
-  });
-
-  Meteor.publish('students.school', function(schoolId) {
+  Meteor.publish('teacherTransfers.all', function() {
     if (
       Roles.userIsInRole(this.userId, 'admin') ||
       Roles.userIsInRole(this.userId, 'school')
     ) {
-      return Students.find({ schoolId });
+      return TeacherTransfers.find();
     }
     return this.ready();
   });

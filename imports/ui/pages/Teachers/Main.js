@@ -3,7 +3,7 @@ import { userIsInRole } from '../../../api/users/methods';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import Students from '../../../api/students/students';
+import Teachers from '../../../api/teachers/teachers';
 import { Box, Grid, IconButton, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import Subjects from '../../../api/subjects/subjects';
@@ -18,11 +18,16 @@ import Schools from '../../../api/schools/schools';
 import TransferWithinAStationOutlinedIcon from '@material-ui/icons/TransferWithinAStationOutlined';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import {
-  studentsDeleteByStudentId,
-  studentsInsert,
-} from '../../../api/students/methods';
+  teachersDeleteByTeacherId,
+  teachersInsert,
+} from '../../../api/teachers/methods';
 import useSnackbars from '../../../api/notifications/snackbarConsumer';
-import { studentTransfersInsert } from '../../../api/studentTransfers/methods';
+import { teacherTransfersInsert } from '../../../api/teacherTransfers/methods';
+import {
+  idCounterGetTeacherId,
+  idCounterIncrementTeacherId,
+  idCounterSetTeacherId,
+} from '../../../api/idCounter/methods';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,7 +51,7 @@ const Main = props => {
   const { showSnackbar } = useSnackbars();
   const { showDialog } = useDialogs();
 
-  const TITLE = 'students';
+  const TITLE = 'teachers';
 
   const DRAWER_TITLE = {
     title: t(TITLE).toUpperCase(),
@@ -78,7 +83,7 @@ const Main = props => {
   if (!Meteor.userId()) return null;
 
   const lookupParser = fieldName => {
-    return Meteor.apply('students.getDistinct', [fieldName], {
+    return Meteor.apply('teachers.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       return { ...obj, [item]: item };
@@ -86,7 +91,7 @@ const Main = props => {
   };
 
   const lookupSchoolParser = fieldName => {
-    return Meteor.apply('students.getDistinct', [fieldName], {
+    return Meteor.apply('teachers.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       let school = props.schools.find(e => e.schoolId === item);
@@ -96,7 +101,7 @@ const Main = props => {
   };
 
   const lookupSubjectParser = fieldName => {
-    return Meteor.apply('students.getDistinct', [fieldName], {
+    return Meteor.apply('teachers.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       let subject = props.subjects.find(e => e.subjectId === item);
@@ -113,20 +118,9 @@ const Main = props => {
       editable: 'onAdd',
     },
     {
-      title: t('student_id'),
-      field: 'studentId',
+      title: t('teacher_id'),
+      field: 'teacherId',
       editable: 'never',
-    },
-    {
-      title: t('grade'),
-      field: 'grade',
-      lookup: lookupParser('grade'),
-      editable: 'onAdd',
-    },
-    {
-      title: t('division'),
-      field: 'division',
-      lookup: lookupParser('division'),
     },
     {
       title: t('surname'),
@@ -137,24 +131,33 @@ const Main = props => {
       field: 'name',
     },
     {
-      title: t('language_group'),
-      field: 'languageGroup',
-      lookup: lookupParser('languageGroup'),
-    },
-    {
-      title: t('olympiad_subject'),
+      title: t('subject'),
       field: 'subjectName',
-      lookup: lookupSubjectParser('olympiad'),
+      lookup: lookupSubjectParser('subjectId'),
     },
     {
-      title: t('elective_group'),
-      field: 'electiveGroup',
-      lookup: lookupParser('electiveGroup'),
+      title: t('academic_degree'),
+      field: 'academicDegree',
+      lookup: lookupParser('academicDegree'),
     },
     {
-      title: t('level'),
-      field: 'level',
-      lookup: lookupParser('level'),
+      title: t('work_experience'),
+      field: 'workExperience',
+    },
+    {
+      title: t('position'),
+      field: 'position',
+      lookup: lookupParser('position'),
+    },
+    {
+      title: 'IELTS',
+      field: 'ielts',
+      lookup: lookupParser('ielts'),
+    },
+    {
+      title: t('category'),
+      field: 'category',
+      lookup: lookupParser('category'),
     },
   ];
 
@@ -163,24 +166,24 @@ const Main = props => {
       <MaterialTable
         title={t('current_list').toUpperCase()}
         columns={COLUMNS}
-        data={props.students.map(result => {
+        data={props.teachers.map(result => {
           let school = props.schools.find(e => e.schoolId === result.schoolId);
           let schoolName = school ? school.shortName : '';
           let subject = props.subjects.find(
-            e => e.subjectId === result.olympiad
+            e => e.subjectId === result.subjectId
           );
           let subjectName = subject ? subject[`name_${i18n.language}`] : '';
           let returnObject = {
             schoolName,
             subjectName,
-            studentId: result.studentId,
-            grade: result.grade,
-            division: result.division,
+            teacherId: result.teacherId,
             surname: result.surname,
             name: result.name,
-            languageGroup: result.languageGroup,
-            electiveGroup: result.electiveGroup,
-            level: result.level,
+            academicDegree: result.academicDegree,
+            workExperience: result.workExperience,
+            position: result.position,
+            ielts: result.ielts,
+            category: result.category,
           };
           return returnObject;
         })}
@@ -249,19 +252,19 @@ const Main = props => {
                     e => e.shortName === toInsert.schoolName
                   ).schoolId;
 
-                  toInsert.olympiad = props.subjects.find(
+                  toInsert.subjectId = props.subjects.find(
                     e => e[`name_${i18n.language}`] === toInsert.subjectName
                   ).subjectId;
 
-                  delete toInsert['subjectName'];
                   delete toInsert['schoolName'];
+                  delete toInsert['subjectName'];
                   delete toInsert['tableData'];
 
-                  studentTransfersInsert
+                  teacherTransfersInsert
                     .callPromise(toInsert)
                     .then(res => {
-                      studentsDeleteByStudentId.call(
-                        { studentId: res },
+                      teachersDeleteByTeacherId.call(
+                        { teacherId: res },
                         (err, res) => {
                           if (err)
                             showSnackbar({
@@ -300,24 +303,42 @@ const Main = props => {
                 e => e.shortName === toInsert.schoolName
               ).schoolId;
 
-              toInsert.olympiad = props.subjects.find(
+              toInsert.subjectId = props.subjects.find(
                 e => e[`name_${i18n.language}`] === toInsert.subjectName
               ).subjectId;
 
               delete toInsert['subjectName'];
               delete toInsert['schoolName'];
 
-              setTimeout(() => {
-                studentsInsert.call(toInsert, (err, res) => {
-                  if (err) {
-                    showSnackbar({ message: err.message, severity: 'error' });
-                    reject();
-                  } else {
-                    showSnackbar({ message: t('done'), severity: 'success' });
-                    resolve();
-                  }
+              idCounterGetTeacherId
+                .callPromise()
+                .then(res => {
+                  toInsert.teacherId = res;
+                  teachersInsert.call(toInsert, err => {
+                    if (err) {
+                      showSnackbar({ message: err.message, severity: 'error' });
+                      reject();
+                    } else {
+                      showSnackbar({ message: t('done'), severity: 'success' });
+                      resolve();
+                    }
+                  });
+                })
+                .then(res => {
+                  idCounterIncrementTeacherId.call(err => {
+                    if (err) {
+                      showSnackbar({ message: err.message, severity: 'error' });
+                      reject();
+                    } else {
+                      showSnackbar({ message: t('done'), severity: 'success' });
+                      resolve();
+                    }
+                  });
+                })
+                .catch(err => {
+                  showSnackbar({ message: err.message, severity: 'error' });
+                  reject();
                 });
-              }, 500);
             }),
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve, reject) => {
@@ -327,14 +348,14 @@ const Main = props => {
                   e => e.shortName === toInsert.schoolName
                 ).schoolId;
 
-                toInsert.olympiad = props.subjects.find(
+                toInsert.subjectId = props.subjects.find(
                   e => e[`name_${i18n.language}`] === toInsert.subjectName
                 ).subjectId;
 
                 delete toInsert['subjectName'];
                 delete toInsert['schoolName'];
 
-                studentsInsert.call(toInsert, (err, res) => {
+                teachersInsert.call(toInsert, (err, res) => {
                   if (err) {
                     showSnackbar({ message: err.message, severity: 'error' });
                     reject();
@@ -348,8 +369,8 @@ const Main = props => {
           // onRowDelete: oldData =>
           //   new Promise((resolve, reject) => {
           //     setTimeout(() => {
-          //       studentsDeleteByStudentId.call(
-          //         { studentId: oldData.studentId },
+          //       teachersDeleteByTeacherId.call(
+          //         { teacherId: oldData.teacherId },
           //         (err, res) => {
           //           if (err) {
           //             showSnackbar({ message: err.message, severity: 'error' });
@@ -373,21 +394,21 @@ export default withTracker(props => {
   const schools = Schools.find().fetch();
 
   if (Roles.userIsInRole(Meteor.userId(), 'admin')) {
-    Meteor.subscribe('students.all');
+    Meteor.subscribe('teachers.all');
   } else {
     const schoolId = schools.find(e => e.userId === Meteor.userId())?.schoolId;
-    Meteor.subscribe('students.school', schoolId);
+    Meteor.subscribe('teachers.school', schoolId);
   }
-  const students = Students.find().fetch();
+  const teachers = Teachers.find().fetch();
 
   const subjectsSub = Meteor.subscribe('subjects.all');
   const subjects = Subjects.find().fetch();
 
   const idCounterSub = Meteor.subscribe('idCounter.all');
-  const studentTransfers = Meteor.subscribe('studentTransfers.all');
+  const teacherTransfers = Meteor.subscribe('teacherTransfers.all');
 
   return {
-    students,
+    teachers,
     subjects,
     schools,
   };

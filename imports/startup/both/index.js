@@ -30,5 +30,11 @@ import '../../api/students/methods';
 import '../../api/studentTransfers/studentTransfers';
 import '../../api/studentTransfers/methods';
 
+import '../../api/teachers/teachers';
+import '../../api/teachers/methods';
+
+import '../../api/teacherTransfers/teacherTransfers';
+import '../../api/teacherTransfers/methods';
+
 import '../../api/idCounter/idCounter';
 import '../../api/idCounter/methods';

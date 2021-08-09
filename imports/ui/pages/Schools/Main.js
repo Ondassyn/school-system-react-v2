@@ -150,6 +150,7 @@ const Main = props => {
             actions: t('actions'),
           },
           body: {
+            emptyDataSourceMessage: t('no_records'),
             addTooltip: t('add'),
             deleteTooltip: t('delete'),
             editTooltip: t('edit'),

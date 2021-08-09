@@ -71,7 +71,14 @@
         "no_permission" : "Бұл бетті көруге рұқсатыңыз жоқ",
         "current_list" : "Ағымдағы тізім",
         "transfer_list" : "Трансфер тізімі",
-        "add_to_school_confirmation" : "Бұл оқушыны мектебіңізге қосу керек пе?",
+        "add_to_school_confirmation" : "Бұл адамды мектебіңізге қосу керек пе?",
+        "teacher_id" : "Мұғалім ID",
+        "subject" : "Пәні",
+        "academic_degree" : "Ғылыми дәрежесі",
+        "work_experience" : "Жұмыс тәжірибесі",
+        "position" : "Лауазымы",
+        "category" : "Санаты",
+        "no_records" : "Көрсетілетін деректер жоқ",
 
         "paragraph": "Introduction",
         "author": {

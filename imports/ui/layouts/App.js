@@ -28,6 +28,8 @@ import BtsSettings from '../pages/BTS/Settings/Settings';
 import Students from '../pages/Students/Main';
 import Schools from '../pages/Schools/Main';
 import StudentTransfers from '../pages/Students/Transfers';
+import Teachers from '../pages/Teachers/Main';
+import TeacherTransfers from '../pages/Teachers/Transfers';
 
 // import Spinner
 import Spinner from '../components/Spinner';
@@ -81,6 +83,18 @@ const App = props => {
                     exact
                     path="/students/transfers"
                     component={StudentTransfers}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/teachers"
+                    component={Teachers}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/teachers/transfers"
+                    component={TeacherTransfers}
                     {...props}
                   />
                   <PropsRoute

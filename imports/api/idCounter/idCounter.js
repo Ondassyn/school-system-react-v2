@@ -11,7 +11,7 @@ const Schema = new SimpleSchema({
   _id: {
     type: String,
   },
-  techerId: {
+  teacherId: {
     type: SimpleSchema.Integer,
   },
   studentId: {
