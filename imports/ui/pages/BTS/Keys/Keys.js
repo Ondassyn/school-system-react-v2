@@ -21,8 +21,13 @@ import useDrawer from '../../../../api/drawer/drawerConsumer';
 import VpnKeyOutlinedIcon from '@material-ui/icons/VpnKeyOutlined';
 import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
+import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 
 import Typography from '@material-ui/core/Typography';
+
+import { useTranslation } from 'react-i18next';
+import { userIsInRole } from '../../../../api/users/methods';
+import BtsSettings from '../../../../api/bts/settings/settings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,92 +44,87 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const EXAM_TITLE = 'bts';
-
-const DRAWER_TITLE = {
-  title: EXAM_TITLE.toUpperCase(),
-  link: '/' + EXAM_TITLE,
-};
-
-const DRAWER_MENU = [
-  {
-    title: 'Answer keys',
-    icon: <VpnKeyOutlinedIcon />,
-    link: '/' + EXAM_TITLE + '/keys',
-  },
-  {
-    title: 'Results',
-    icon: <ListAltOutlinedIcon />,
-    link: '/' + EXAM_TITLE + '/results',
-  },
-  {
-    title: 'Rating',
-    icon: <InsertChartOutlinedIcon />,
-    link: '/' + EXAM_TITLE + '/ratings',
-  },
-];
+const EXAM_NAME = 'bts';
 
 function Keys(props) {
   const classes = useStyles();
+  const [t, i18n] = useTranslation();
   const { setDrawer, setDrawerTitle } = useDrawer();
 
   useEffect(() => {
+    const DRAWER_TITLE = {
+      title: t(EXAM_NAME).toUpperCase(),
+      link: '/' + EXAM_NAME,
+    };
+
+    const DRAWER_MENU = [
+      {
+        title: t('answer_keys'),
+        icon: <VpnKeyOutlinedIcon />,
+        link: '/' + EXAM_NAME + '/keys',
+      },
+      {
+        title: t('results'),
+        icon: <ListAltOutlinedIcon />,
+        link: '/' + EXAM_NAME + '/results',
+      },
+      {
+        title: t('rating'),
+        icon: <InsertChartOutlinedIcon />,
+        link: '/' + EXAM_NAME + '/ratings',
+      },
+    ];
+
+    userIsInRole
+      .callPromise({ userId: Meteor.userId(), role: 'admin' })
+      .then(res => {
+        if (res) {
+          DRAWER_MENU.push({
+            title: t('settings'),
+            icon: <SettingsOutlinedIcon />,
+            link: '/' + EXAM_NAME + '/settings',
+          });
+        }
+        setDrawer(DRAWER_MENU);
+      });
+
     setDrawerTitle(DRAWER_TITLE);
-    setDrawer(DRAWER_MENU);
-  }, []);
+  }, [i18n.language]);
 
   const COLUMNS = [
     {
-      title: 'Year',
-      field: 'year',
+      title: t('year'),
+      field: 'academicYear',
+      defaultFilter: props.currentYear,
     },
     {
-      title: 'Exam Number',
+      title: t('exam_number'),
       field: 'examNumber',
     },
     {
-      title: 'Grade',
+      title: t('grade'),
       field: 'grade',
     },
     {
-      title: 'Day',
+      title: t('day'),
       field: 'day',
     },
     {
-      title: 'Variant',
+      title: t('variant'),
       field: 'variant',
-    },
-    {
-      title: 'SubjectIDs',
-      field: 'ids',
     },
   ];
 
   return (
-    <div className={classes.root}>
+    <div>
       <MaterialTable
         title=""
-        data={props.keys.map(e => {
-          let ids = '';
-          e.keys.map(f => {
-            ids += f.subjectId + ', ';
-          });
-          if (e.keys.length > 0) ids = ids.replace(/,\s*$/, '');
-          return {
-            _id: e._id,
-            year: e.academicYear,
-            examNumber: e.examNumber,
-            grade: e.grade,
-            day: e.day,
-            variant: e.variant,
-            ids: ids,
-          };
-        })}
+        data={props.keys}
         icons={TableIcons}
         columns={[
           ...COLUMNS,
           {
-            title: 'Actions',
+            title: t('actions'),
             render: rowData => {
               return (
                 <div className={classes.actions}>
@@ -133,6 +133,7 @@ function Keys(props) {
                     initialData={props.keys.find(e => e._id === rowData._id)}
                     currentYear={props.currentYear}
                     subjects={props.subjects}
+                    settings={props.settings}
                   />
                   <DeleteKey _id={rowData._id} />
                 </div>
@@ -140,17 +141,52 @@ function Keys(props) {
             },
           },
         ]}
+        localization={{
+          toolbar: {
+            exportCSVName: t('export_csv'),
+            exportTitle: t('export'),
+            searchTooltip: t('search'),
+            searchPlaceholder: t('search'),
+          },
+          header: {
+            actions: t('actions'),
+          },
+          body: {
+            emptyDataSourceMessage: t('no_records'),
+            addTooltip: t('add'),
+            deleteTooltip: t('delete'),
+            editTooltip: t('edit'),
+            filterRow: {
+              filterPlaceholder: t('filter'),
+              filterTooltip: t('filter'),
+            },
+            editRow: {
+              deleteText: t('delete_confirmation'),
+              cancelTooltip: t('cancel'),
+              saveTooltip: t('confirm'),
+            },
+          },
+          pagination: {
+            labelRowsSelect: t('rows'),
+            labelRowsPerPage: t('rows_per_page'),
+            firstTooltip: t('first_page'),
+            previousTooltip: t('previous_page'),
+            nextTooltip: t('next_page'),
+            lastTooltip: t('last_page'),
+          },
+        }}
         components={{
           Toolbar: localProps => (
             <div className={classes.toolbar}>
               <Typography className={classes.tableTitle} variant="h6">
-                {EXAM_TITLE.toUpperCase() + ' Keys'}
+                {EXAM_NAME.toUpperCase() + ' ' + t('answer_keys')}
               </Typography>
               <MTableToolbar {...localProps} />
               <AddKey
                 icon={'add'}
                 currentYear={props.currentYear}
                 subjects={props.subjects}
+                settings={props.settings}
               />
             </div>
           ),
@@ -215,16 +251,19 @@ export default withTracker(props => {
     */
 
   // counters example
-  const btsKeysSub = Meteor.subscribe(
-    'btsKeys.academicYear',
-    props.currentYear
-  );
+  const btsKeysSub = Meteor.subscribe('btsKeys.all');
   const keys = BtsKeys.find().fetch();
   const keysReady = btsKeysSub.ready() && !!keys;
 
   const subjectsSub = Meteor.subscribe('subjects.all');
   const subjects = Subjects.find().fetch();
   const subjectsReady = subjectsSub.ready() && !!subjects;
+
+  const settingsSub = Meteor.subscribe(
+    'btsSettings.academicYear',
+    props.currentYear
+  );
+  const settings = BtsSettings.find().fetch();
 
   return {
     // remote example (if using ddp)
@@ -234,5 +273,6 @@ export default withTracker(props => {
     keys,
     subjectsReady,
     subjects,
+    settings,
   };
 })(Keys);

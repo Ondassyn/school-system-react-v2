@@ -42,6 +42,35 @@ const checkLoggedInError = {
 //    return returnValue;
 //  };
 
+export const btsSettingsGetDistinct = new ValidatedMethod({
+  name: 'btsSettings.getDistinct',
+  mixins,
+  checkLoggedInError,
+  validate: null,
+  run(fieldName) {
+    // if (Meteor.isServer) {
+    //   returnValues = Meteor.wrapAsync(callback => {
+    //     BtsResults.rawCollection().distinct('grade', callback);
+    //   })();
+    // }
+
+    let distinctFieldValues = _.uniq(
+      BtsSettings.find(
+        {},
+        {
+          sort: { [fieldName]: 1 },
+          fields: { [fieldName]: true },
+        }
+      )
+        .fetch()
+        .map(e => e[fieldName]),
+      true
+    );
+
+    return distinctFieldValues;
+  },
+});
+
 export const btsSettingsInsert = new ValidatedMethod({
   name: 'btsSettings.insert',
   mixins: [CallPromiseMixin],

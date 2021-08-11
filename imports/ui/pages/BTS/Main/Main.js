@@ -10,33 +10,53 @@ import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 
 import { userIsInRole } from '../../../../api/users/methods';
+import { useTranslation } from 'react-i18next';
 
-const DRAWER_TITLE = { title: 'BTS', link: '/bts' };
-
-const DRAWER_MENU = [
-  { title: 'Answer keys', icon: <VpnKeyOutlinedIcon />, link: '/bts/keys' },
-  { title: 'Results', icon: <ListAltOutlinedIcon />, link: '/bts/results' },
-  { title: 'Rating', icon: <InsertChartOutlinedIcon />, link: '/bts/ratings' },
-];
+const EXAM_NAME = 'bts';
 
 export default Main = () => {
+  const [t, i18n] = useTranslation();
   const { setDrawer, setDrawerTitle } = useDrawer();
 
   useEffect(() => {
-    userIsInRole.call(
-      { userId: Meteor.userId(), role: 'admin' },
-      (err, res) => {
-        if (res)
+    const DRAWER_TITLE = {
+      title: t(EXAM_NAME).toUpperCase(),
+      link: '/' + EXAM_NAME,
+    };
+
+    const DRAWER_MENU = [
+      {
+        title: t('answer_keys'),
+        icon: <VpnKeyOutlinedIcon />,
+        link: '/' + EXAM_NAME + '/keys',
+      },
+      {
+        title: t('results'),
+        icon: <ListAltOutlinedIcon />,
+        link: '/' + EXAM_NAME + '/results',
+      },
+      {
+        title: t('rating'),
+        icon: <InsertChartOutlinedIcon />,
+        link: '/' + EXAM_NAME + '/ratings',
+      },
+    ];
+
+    userIsInRole
+      .callPromise({ userId: Meteor.userId(), role: 'admin' })
+      .then(res => {
+        if (res) {
           DRAWER_MENU.push({
-            title: 'Settings',
+            title: t('settings'),
             icon: <SettingsOutlinedIcon />,
-            link: '/bts/settings',
+            link: '/' + EXAM_NAME + '/settings',
           });
-      }
-    );
+        }
+        setDrawer(DRAWER_MENU);
+      });
+
     setDrawerTitle(DRAWER_TITLE);
-    setDrawer(DRAWER_MENU);
-  }, []);
+  }, [i18n.language]);
 
   return <div></div>;
 };

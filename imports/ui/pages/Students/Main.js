@@ -120,7 +120,7 @@ const Main = props => {
     {
       title: t('grade'),
       field: 'grade',
-      lookup: lookupParser('grade'),
+      // lookup: lookupParser('grade'),
       editable: 'onAdd',
     },
     {

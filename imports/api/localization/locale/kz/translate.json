@@ -79,6 +79,9 @@
         "position" : "Лауазымы",
         "category" : "Санаты",
         "no_records" : "Көрсетілетін деректер жоқ",
+        "year" : "Жыл",
+        "exam_number" : "Емтихан нөмірі",
+        "variant" : "Нұсқа",
 
         "paragraph": "Introduction",
         "author": {

@@ -79,6 +79,9 @@
         "position" : "Должность",
         "category" : "Категория",
         "no_records" : "Нет данных для отображения",
+        "year" : "Год",
+        "exam_number" : "Номер экзамена",
+        "variant" : "Вариант",
 
         "paragraph": "Introduction",
         "author": {

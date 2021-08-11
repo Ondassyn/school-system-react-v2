@@ -79,6 +79,9 @@
         "position" : "Position",
         "category" : "Category",
         "no_records" : "No records to display",
+        "year" : "Year",
+        "exam_number" : "Exam number",
+        "variant" : "Variant",
 
         "paragraph": "Introduction",
         "author": {
