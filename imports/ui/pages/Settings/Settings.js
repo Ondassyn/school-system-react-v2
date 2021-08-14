@@ -5,8 +5,16 @@ import Schools from '../../../api/schools/schools';
 import CreateRole from './CreateRole/CreateRole';
 import AssignUserToRole from './AssignRole/AssignUserToRole';
 import AddUser from './AddUser/AddUser';
+import useDrawer from '../../../api/drawer/drawerConsumer';
 
 const Settings = props => {
+  const { setDrawer, setDrawerTitle } = useDrawer();
+
+  useEffect(() => {
+    setDrawer();
+    setDrawerTitle();
+  });
+
   useEffect(() => {
     if (!Meteor.userId()) props.history.push('/signin');
   });

@@ -6,14 +6,20 @@ import BtsRatings from './ratings';
 
 if (Meteor.isServer) {
   Meteor.publish('btsRatings.all', function() {
-    if (Roles.userIsInRole(this.userId, 'admin')) {
+    if (
+      Roles.userIsInRole(this.userId, 'admin') ||
+      Roles.userIsInRole(this.userId, 'school')
+    ) {
       return BtsRatings.find();
     }
     return this.ready();
   });
 
   Meteor.publish('btsRatings.academicYear', function(academicYear) {
-    if (Roles.userIsInRole(this.userId, 'admin')) {
+    if (
+      Roles.userIsInRole(this.userId, 'admin') ||
+      Roles.userIsInRole(this.userId, 'school')
+    ) {
       return BtsRatings.find({ academicYear });
     }
     return this.ready();

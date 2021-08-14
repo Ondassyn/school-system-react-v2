@@ -4,15 +4,18 @@ import Students from '../../students/students';
 
 import { btsResultsInsert } from './methods';
 import { calculateRating } from './calculateRating';
+import { useTranslation } from 'react-i18next';
 
 export const upload = ({ data, academicYear, examNumber, day }) => {
   const INTERVAL = 5;
+
+  const [t, i18n] = useTranslation();
 
   return new Promise((resolve, reject) => {
     let lines = data.trim().split('\n');
 
     if (!lines.length) {
-      reject('File is empty');
+      reject(t('empty_file'));
     }
 
     for (let i = 0; i < lines.length; i++) {
@@ -26,11 +29,15 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
 
       let school = Schools.findOne({ schoolId });
 
-      if (!school) reject(`Wrong schoolId on line ${i}: {${schoolId}}`);
+      if (!school)
+        reject(`${t('school_id_not_found')}, ${t('line')} ${i}: {${schoolId}}`);
 
       let student = Students.findOne({ studentId: +studentId });
 
-      if (!student) reject(`Wrong studentId on line ${i}: {${studentId}}`);
+      if (!student)
+        reject(
+          `${t('student_id_not_found')}, ${t('line')} ${i}: {${studentId}}`
+        );
 
       let keys = BtsKeys.findOne({
         academicYear,
@@ -42,7 +49,9 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
 
       if (!keys)
         reject(
-          `Keys were not found, line ${i}: {variant: ${variant}, grade: ${student.grade}}`
+          `${t('keys_not_found')}, ${t('line')} ${i}: {${t(
+            'variant'
+          )}: ${variant}, ${t('grade')}: ${student.grade}}`
         );
 
       let studentResult = {
@@ -67,7 +76,9 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
         const { subjectId, keys: subjectKeys } = key;
         !subjectKeys.length &&
           reject(
-            `No keys could be found, line ${i}: {variant: ${variant}, subjectId: ${subjectId}}`
+            `${t('keys_not_found')}, ${t('line')} ${i}: {${t(
+              'variant'
+            )}: ${variant}, ${t('subjectId')}: ${subjectId}}`
           );
 
         let subjectResult = 0;
@@ -98,6 +109,6 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
       reject(value);
     });
 
-    resolve('Inserted');
+    resolve(t('done'));
   });
 };

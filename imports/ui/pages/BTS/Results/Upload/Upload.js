@@ -1,35 +1,45 @@
 import React, { useState } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
-import AddIcon from '@material-ui/icons/Add';
+import AddBox from '@material-ui/icons/AddBox';
 import TransitionModal from '../../../../components/TransitionModal/TransitionModal';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
+import { Tooltip } from '@material-ui/core';
 
 import Input from '@material-ui/core/Input';
 
 import { upload } from '../../../../../api/bts/results/upload';
 import useSnackbars from '../../../../../api/notifications/snackbarConsumer';
-
-const EXAM_NUMBERS = [1, 2, 3, 4];
-const DAYS = [1, 2];
+import { Button, IconButton } from '@material-ui/core';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles(theme => ({
+  formRoot: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
   formControl: {
+    display: 'flex',
     margin: theme.spacing(1),
-    minWidth: 200,
+    minWidth: 300,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  button: {
+    margin: theme.spacing(2),
+  },
 }));
 
-export const Upload = ({ setBlocking, currentYear }) => {
+export const Upload = ({ setBlocking, settings, currentYear }) => {
   const classes = useStyles();
   const { showSnackbar } = useSnackbars();
+  const [t, i18n] = useTranslation();
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [examNumber, setExamNumber] = useState('');
@@ -46,13 +56,13 @@ export const Upload = ({ setBlocking, currentYear }) => {
 
   const processData = async data => {
     if (!data) {
-      showSnackbar({ message: 'No data is passed', severity: 'error' });
+      showSnackbar({ message: t('no_data'), severity: 'error' });
       return;
     }
 
     if (!currentYear) {
       showSnackbar({
-        message: 'Current year is not defined',
+        message: t('year_not_selected'),
         severity: 'error',
       });
       return;
@@ -60,14 +70,14 @@ export const Upload = ({ setBlocking, currentYear }) => {
 
     if (!examNumber) {
       showSnackbar({
-        message: 'Exam number is not selected',
+        message: 'exam_number_not_selected',
         severity: 'error',
       });
       return;
     }
 
     if (!day) {
-      showSnackbar({ message: 'Day is not selected', severity: 'error' });
+      showSnackbar({ message: 'day_not_selected', severity: 'error' });
       return;
     }
 
@@ -83,7 +93,7 @@ export const Upload = ({ setBlocking, currentYear }) => {
     e.preventDefault();
 
     if (!file) {
-      showSnackbar({ message: 'No file is found', severity: 'error' });
+      showSnackbar({ message: t('file_not_found'), severity: 'error' });
       return;
     }
     let fileReader = new FileReader();
@@ -92,50 +102,67 @@ export const Upload = ({ setBlocking, currentYear }) => {
   };
 
   const form = (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className={classes.formRoot}>
       <FormControl className={classes.formControl}>
-        <InputLabel>Exam Number</InputLabel>
+        <InputLabel>{t('exam_number')}</InputLabel>
         <Select
           value={examNumber}
           onChange={e => setExamNumber(e.target.value)}
         >
-          {EXAM_NUMBERS.map(e => (
-            <MenuItem key={e} value={e}>
-              {e}
-            </MenuItem>
-          ))}
+          {settings
+            .map(e => e.examNumber)
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .map(item => (
+              <MenuItem key={item} value={item}>
+                {item}
+              </MenuItem>
+            ))}
         </Select>
         {/* <FormHelperText>Placeholder</FormHelperText> */}
       </FormControl>
       <FormControl className={classes.formControl}>
-        <InputLabel>Day</InputLabel>
+        <InputLabel>{t('day')}</InputLabel>
         <Select value={day} onChange={e => setDay(e.target.value)}>
-          {DAYS.map(e => (
-            <MenuItem key={e} value={e}>
-              {e}
-            </MenuItem>
-          ))}
+          {settings
+            .map(e => e.day)
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .map(item => (
+              <MenuItem key={item} value={item}>
+                {item}
+              </MenuItem>
+            ))}
         </Select>
         {/* <FormHelperText>Placeholder</FormHelperText> */}
       </FormControl>
 
-      <Input
-        type="file"
-        onChange={e => setFile(e.target.files[0])}
-        inputProps={{ accept: '.csv, .txt' }}
-      />
+      <FormControl className={classes.formControl}>
+        <Input
+          className={classes.fileInput}
+          color="primary"
+          type="file"
+          onChange={e => setFile(e.target.files[0])}
+          inputProps={{ accept: '.csv, .txt' }}
+        />
+      </FormControl>
 
-      <div className="form-group">
-        <button className="form-control btn btn-primary" type="submit">
-          Submit
-        </button>
-      </div>
+      <Button
+        className={classes.button}
+        variant="outlined"
+        color="primary"
+        onClick={onSubmit}
+      >
+        {t('upload')}
+      </Button>
     </form>
   );
 
   return (
     <div>
-      <AddIcon className="icon" onClick={showModal} />
+      <Tooltip title={t('upload')}>
+        <IconButton onClick={showModal}>
+          <AddBox fontSize="large" color="primary" />
+        </IconButton>
+      </Tooltip>
       <TransitionModal form={form} isOpen={modalIsOpen} close={closeModal} />
     </div>
   );

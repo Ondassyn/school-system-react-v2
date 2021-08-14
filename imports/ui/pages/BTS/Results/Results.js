@@ -6,6 +6,9 @@ import PropTypes from 'prop-types';
 
 import MaterialTable, { MTableToolbar } from 'material-table';
 import TableIcons from '../../../components/MaterialTable/TableIcons';
+import { makeStyles } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
+import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 
 import { Upload } from './Upload/Upload';
 import BlockUi from 'react-block-ui';
@@ -22,23 +25,82 @@ import useDrawer from '../../../../api/drawer/drawerConsumer';
 import VpnKeyOutlinedIcon from '@material-ui/icons/VpnKeyOutlined';
 import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
+import { useTranslation } from 'react-i18next';
+import { userIsInRole } from '../../../../api/users/methods';
+import BtsSettings from '../../../../api/bts/settings/settings';
 
-const DRAWER_TITLE = { title: 'BTS', link: '/bts' };
+const EXAM_NAME = 'bts';
 
-const DRAWER_MENU = [
-  { title: 'Answer keys', icon: <VpnKeyOutlinedIcon />, link: '/bts/keys' },
-  { title: 'Results', icon: <ListAltOutlinedIcon />, link: '/bts/results' },
-  { title: 'Rating', icon: <InsertChartOutlinedIcon />, link: '/bts/ratings' },
-];
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '1rem 2rem 0 2rem',
+  },
+  toolbarActions: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  actions: {
+    display: 'flex',
+  },
+}));
 
 const Results = props => {
+  const classes = useStyles();
   const [blocking, setBlocking] = useState(false);
+  const [t, i18n] = useTranslation();
   const { setDrawer, setDrawerTitle } = useDrawer();
 
   useEffect(() => {
+    const DRAWER_TITLE = {
+      title: t(EXAM_NAME).toUpperCase(),
+      link: '/' + EXAM_NAME,
+    };
+
+    const DRAWER_MENU = [
+      {
+        title: t('answer_keys'),
+        icon: <VpnKeyOutlinedIcon />,
+        link: '/' + EXAM_NAME + '/keys',
+      },
+      {
+        title: t('results'),
+        icon: <ListAltOutlinedIcon />,
+        link: '/' + EXAM_NAME + '/results',
+      },
+      {
+        title: t('rating'),
+        icon: <InsertChartOutlinedIcon />,
+        link: '/' + EXAM_NAME + '/ratings',
+      },
+    ];
+
+    userIsInRole
+      .callPromise({ userId: Meteor.userId(), role: 'admin' })
+      .then(res => {
+        if (res) {
+          DRAWER_MENU.push({
+            title: t('settings'),
+            icon: <SettingsOutlinedIcon />,
+            link: '/' + EXAM_NAME + '/settings',
+          });
+        }
+        setDrawer(DRAWER_MENU);
+      });
+
     setDrawerTitle(DRAWER_TITLE);
-    setDrawer(DRAWER_MENU);
-  }, []);
+  }, [i18n.language]);
+
+  useEffect(() => {
+    if (!Meteor.userId()) props.history.push('/signin');
+  });
+
+  if (!Meteor.userId()) return null;
 
   const lookupParser = fieldName => {
     return Meteor.apply('btsResults.getDistinct', [fieldName], {
@@ -60,40 +122,35 @@ const Results = props => {
 
   const COLUMNS = [
     {
-      title: 'Year',
+      title: t('year'),
       field: 'academicYear',
-      lookup: lookupParser('academicYear'),
+      defaultFilter: props.currentYear,
     },
     {
-      title: 'Exam Number',
+      title: t('exam_number'),
       field: 'examNumber',
       lookup: lookupParser('examNumber'),
     },
     {
-      title: 'School',
+      title: t('school'),
       field: 'schoolName',
       lookup: lookupSchoolParser('schoolId'),
     },
     {
-      title: 'Grade',
+      title: t('grade'),
       field: 'grade',
       lookup: lookupParser('grade'),
     },
     {
-      title: 'Division',
-      field: 'division',
-      lookup: lookupParser('division'),
-    },
-    {
-      title: 'Surname',
+      title: t('surname'),
       field: 'surname',
     },
     {
-      title: 'Name',
+      title: t('name'),
       field: 'name',
     },
     {
-      title: 'Total',
+      title: t('total'),
       field: 'total',
     },
   ];
@@ -102,13 +159,12 @@ const Results = props => {
     <BlockUi
       tag="div"
       blocking={blocking}
-      message="Please wait"
+      message={t('please_wait')}
       keepInView="true"
     >
-      <div className="results-page">
-        <Upload setBlocking={setBlocking} currentYear={props.currentYear} />
+      <div>
         <MaterialTable
-          title="BTS Results"
+          title=""
           columns={COLUMNS}
           data={props.results.map(result => {
             let school = props.schools.find(
@@ -131,7 +187,64 @@ const Results = props => {
             // search: false,
             // paging: false,
             filtering: true,
-            // exportButton: false,
+            exportButton: {
+              csv: true,
+              pdf: false,
+            },
+            actionsColumnIndex: -1,
+            //   pageSize: 5,
+            pageSizeOptions: [5, 10, 20, 50, 100],
+          }}
+          localization={{
+            toolbar: {
+              exportCSVName: t('export_csv'),
+              exportTitle: t('export'),
+              searchTooltip: t('search'),
+              searchPlaceholder: t('search'),
+            },
+            header: {
+              actions: t('actions'),
+            },
+            body: {
+              emptyDataSourceMessage: t('no_records'),
+              addTooltip: t('add'),
+              deleteTooltip: t('delete'),
+              editTooltip: t('edit'),
+              filterRow: {
+                filterPlaceholder: t('filter'),
+                filterTooltip: t('filter'),
+              },
+              editRow: {
+                deleteText: t('delete_confirmation'),
+                cancelTooltip: t('cancel'),
+                saveTooltip: t('confirm'),
+              },
+            },
+            pagination: {
+              labelRowsSelect: t('rows'),
+              labelRowsPerPage: t('rows_per_page'),
+              firstTooltip: t('first_page'),
+              previousTooltip: t('previous_page'),
+              nextTooltip: t('next_page'),
+              lastTooltip: t('last_page'),
+            },
+          }}
+          components={{
+            Toolbar: localProps => (
+              <div className={classes.toolbar}>
+                <Typography className={classes.tableTitle} variant="h6">
+                  {EXAM_NAME.toUpperCase() + ' ' + t('results')}
+                </Typography>
+                <div className={classes.toolbarActions}>
+                  <MTableToolbar {...localProps} />
+                  <Upload
+                    setBlocking={setBlocking}
+                    currentYear={props.currentYear}
+                    settings={props.settings}
+                  />
+                </div>
+              </div>
+            ),
           }}
         />
       </div>
@@ -148,19 +261,13 @@ export default withTracker(props => {
       */
 
   // counters example
-  const resultsSub = Meteor.subscribe(
-    'btsResults.academicYear',
-    props.currentYear
-  );
-  const results = BtsResults.find().fetch();
-  const resultsReady = resultsSub.ready() && !!results;
-
-  // const ratingsSub = Meteor.subscribe(
-  //   'btsRatings.academicYear',
+  // const resultsSub = Meteor.subscribe(
+  //   'btsResults.academicYear',
   //   props.currentYear
   // );
-  // const ratings = BtsRatings.find().fetch();
-  // const ratingsReady = ratingsSub.ready() && !!ratings;
+  const resultsSub = Meteor.subscribe('btsResults.all');
+  const results = BtsResults.find().fetch();
+  const resultsReady = resultsSub.ready() && !!results;
 
   const schoolsSub = Meteor.subscribe('schools.all');
   const schools = Schools.find().fetch();
@@ -174,6 +281,12 @@ export default withTracker(props => {
   const keys = BtsKeys.find().fetch();
   const keysReady = keysSub.ready() && !!keys;
 
+  const settingsSub = Meteor.subscribe(
+    'btsSettings.academicYear',
+    props.currentYear
+  );
+  const settings = BtsSettings.find().fetch();
+
   return {
     // remote example (if using ddp)
     // usersReady,
@@ -184,5 +297,6 @@ export default withTracker(props => {
     students,
     // ratings,
     keys,
+    settings,
   };
 })(Results);

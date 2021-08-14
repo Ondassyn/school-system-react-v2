@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 const EXAM_NAME = 'bts';
 
-export default Main = () => {
+export default Main = props => {
   const [t, i18n] = useTranslation();
   const { setDrawer, setDrawerTitle } = useDrawer();
 
@@ -57,6 +57,16 @@ export default Main = () => {
 
     setDrawerTitle(DRAWER_TITLE);
   }, [i18n.language]);
+
+  useEffect(() => {
+    props.history.push('/bts/keys');
+  });
+
+  useEffect(() => {
+    if (!Meteor.userId()) props.history.push('/signin');
+  });
+
+  if (!Meteor.userId()) return null;
 
   return <div></div>;
 };

@@ -61,6 +61,12 @@ const Settings = props => {
     setDrawerTitle(DRAWER_TITLE);
   }, [i18n.language]);
 
+  useEffect(() => {
+    if (!Meteor.userId()) props.history.push('/signin');
+  });
+
+  if (!Meteor.userId()) return null;
+
   return (
     <div>
       <Typography variant="h5" align="center">

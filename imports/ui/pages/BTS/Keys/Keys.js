@@ -91,6 +91,20 @@ function Keys(props) {
     setDrawerTitle(DRAWER_TITLE);
   }, [i18n.language]);
 
+  useEffect(() => {
+    if (!Meteor.userId()) props.history.push('/signin');
+  });
+
+  if (!Meteor.userId()) return null;
+
+  const lookupParser = fieldName => {
+    return Meteor.apply('btsKeys.getDistinct', [fieldName], {
+      returnStubValue: true,
+    }).reduce((obj, item) => {
+      return { ...obj, [item]: item };
+    }, {});
+  };
+
   const COLUMNS = [
     {
       title: t('year'),
@@ -100,14 +114,17 @@ function Keys(props) {
     {
       title: t('exam_number'),
       field: 'examNumber',
+      lookup: lookupParser('examNumber'),
     },
     {
       title: t('grade'),
       field: 'grade',
+      lookup: lookupParser('grade'),
     },
     {
       title: t('day'),
       field: 'day',
+      lookup: lookupParser('day'),
     },
     {
       title: t('variant'),
