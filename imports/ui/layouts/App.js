@@ -20,11 +20,18 @@ import NotFound from '../pages/Not-Found';
 import RecoverPassword from '../pages/RecoverPassword';
 import ResetPassword from '../pages/ResetPassword';
 import TestPage from '../pages/TestPage/TestPage';
-import BtsKeys from '../pages/BTS/Keys/Keys';
-import BtsResults from '../pages/BTS/Results/Results';
-import BtsRatings from '../pages/BTS/Ratings/Ratings';
-import BtsMain from '../pages/BTS/Main/Main';
-import BtsSettings from '../pages/BTS/Settings/Settings';
+
+import BtsKeys from '../pages/Examinations/BTS/Keys/Keys';
+import BtsResults from '../pages/Examinations/BTS/Results/Results';
+import BtsRatings from '../pages/Examinations/BTS/Ratings/Ratings';
+import BtsMain from '../pages/Examinations/BTS/Main/Main';
+import BtsSettings from '../pages/Examinations/BTS/Settings/Settings';
+
+import TurkishA1Keys from '../pages/Examinations/TurkishA1/Keys/Keys';
+import TurkishA1Results from '../pages/Examinations/TurkishA1/Results/Results';
+import TurkishA1Ratings from '../pages/Examinations/TurkishA1/Ratings/Ratings';
+import TurkishA1Main from '../pages/Examinations/TurkishA1/Main/Main';
+
 import Students from '../pages/Students/Main';
 import Schools from '../pages/Schools/Main';
 import StudentTransfers from '../pages/Students/Transfers';
@@ -105,16 +112,18 @@ const App = props => {
                   />
                   <PropsRoute
                     exact
-                    path="/bts"
-                    component={BtsMain}
-                    {...props}
-                  />
-                  <PropsRoute
-                    exact
                     path="/test_page"
                     component={TestPage}
                     {...props}
                   />
+
+                  <PropsRoute
+                    exact
+                    path="/bts"
+                    component={BtsMain}
+                    {...props}
+                  />
+
                   <PropsRoute
                     exact
                     path="/bts/keys"
@@ -138,6 +147,32 @@ const App = props => {
                     exact
                     path="/bts/settings"
                     component={BtsSettings}
+                    {...props}
+                  />
+
+                  <PropsRoute
+                    exact
+                    path="/turkishA1"
+                    component={TurkishA1Main}
+                    {...props}
+                  />
+
+                  <PropsRoute
+                    exact
+                    path="/turkishA1/keys"
+                    component={TurkishA1Keys}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/turkishA1/results"
+                    component={TurkishA1Results}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/turkishA1/ratings"
+                    component={TurkishA1Ratings}
                     {...props}
                   />
 

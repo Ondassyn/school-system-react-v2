@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import Schools from '../../schools/schools';
-import { btsRatingsInsert } from '../ratings/methods';
-import BtsResults from './results';
+import { turkishA1RatingsInsert } from '../ratings/methods';
+import TurkishA1Results from './results';
 
 export const calculateRating = ({ academicYear, examNumber }) => {
   const [t, i18n] = useTranslation();
@@ -9,7 +9,7 @@ export const calculateRating = ({ academicYear, examNumber }) => {
   return new Promise((resolve, reject) => {
     let schools = Schools.find().fetch();
     schools.map(school => {
-      let results = BtsResults.find({
+      let results = TurkishA1Results.find({
         schoolId: school.schoolId,
         examNumber,
       }).fetch();
@@ -48,7 +48,7 @@ export const calculateRating = ({ academicYear, examNumber }) => {
             });
         });
         totalN && (rating.totalAverage = totalSum / totalN);
-        btsRatingsInsert.call(rating, (err, res) => {
+        turkishA1RatingsInsert.call(rating, (err, res) => {
           err && reject(err.message);
         });
       }
