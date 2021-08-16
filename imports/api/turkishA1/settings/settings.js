@@ -18,8 +18,8 @@ const Schema = new SimpleSchema({
     type: SimpleSchema.Integer,
   },
   grade: SimpleSchema.oneOf(String, SimpleSchema.Integer),
-  subjects: Array,
-  'subjects.$': {
+  sections: Array,
+  'sections.$': {
     type: Object,
     blackbox: true,
   },

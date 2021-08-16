@@ -8,7 +8,7 @@ import MaterialTable, { MTableToolbar } from 'material-table';
 import TableIcons from '../../../../components/MaterialTable/TableIcons';
 
 // collections
-import BtsRatings from '../../../../../api/bts/ratings/ratings';
+import TurkishA1Ratings from '../../../../../api/turkishA1/ratings/ratings';
 import Subjects from '../../../../../api/subjects/subjects';
 import Schools from '../../../../../api/schools/schools';
 
@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { userIsInRole } from '../../../../../api/users/methods';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 
-const EXAM_NAME = 'bts';
+const EXAM_NAME = 'turkishA1';
 
 const Ratings = props => {
   const [columns, setColumns] = useState([]);
@@ -90,7 +90,7 @@ const Ratings = props => {
   if (!Meteor.userId()) return null;
 
   const lookupParser = fieldName => {
-    return Meteor.apply('btsRatings.getDistinct', [fieldName], {
+    return Meteor.apply('turkishA1Ratings.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       return { ...obj, [item]: item };
@@ -98,7 +98,7 @@ const Ratings = props => {
   };
 
   const lookupSchoolParser = fieldName => {
-    return Meteor.apply('btsRatings.getDistinct', [fieldName], {
+    return Meteor.apply('turkishA1Ratings.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       let school = props.schools.find(e => e.schoolId === item);
@@ -137,7 +137,7 @@ const Ratings = props => {
   return (
     <div className="ratings-page">
       <MaterialTable
-        title="BTS Ratings"
+        title={t(EXAM_NAME).toUpperCase() + ' ' + t('rating')}
         columns={columns}
         data={props.ratings.map(result => {
           let school = props.schools.find(e => e.schoolId === result.schoolId);
@@ -217,8 +217,8 @@ export default withTracker(props => {
       const usersReady = usersSub.ready() && !!users;
       */
 
-  const ratingsSub = Meteor.subscribe('btsRatings.all');
-  const ratings = BtsRatings.find().fetch();
+  const ratingsSub = Meteor.subscribe('turkishA1Ratings.all');
+  const ratings = TurkishA1Ratings.find().fetch();
   const ratingsReady = ratingsSub.ready() && !!ratings;
 
   const subjectsSub = Meteor.subscribe('subjects.all');

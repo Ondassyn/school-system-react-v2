@@ -6,7 +6,7 @@ import AddIcon from '@material-ui/icons/Add';
 
 import Button from '@material-ui/core/Button';
 
-import { btsKeysInsert } from '../../../../../../api/bts/keys/methods';
+import { turkishA1KeysInsert } from '../../../../../../api/turkishA1/keys/methods';
 import TransitionModal from '../../../../../components/TransitionModal/TransitionModal';
 import FormControl from '@material-ui/core/FormControl';
 import { Typography } from '@material-ui/core';
@@ -19,7 +19,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import useSnackbars from '../../../../../../api/notifications/snackbarConsumer';
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { btsSettingsGetDistinct } from '../../../../../../api/bts/settings/methods';
+import { turkishA1SettingsGetDistinct } from '../../../../../../api/turkishA1/settings/methods';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles(theme => ({
@@ -71,7 +71,6 @@ export default AddKey = ({
   const [examNumber, setExamNumber] = useState(
     initialData ? initialData.examNumber : ''
   );
-  const [day, setDay] = useState(initialData ? initialData.day : '');
   const [variant, setVariant] = useState(
     initialData ? initialData.variant : ''
   );
@@ -96,12 +95,11 @@ export default AddKey = ({
   const onSubmit = event => {
     event.preventDefault(event);
 
-    btsKeysInsert.call(
+    turkishA1KeysInsert.call(
       {
         academicYear: currentYear,
         examNumber,
         grade,
-        day,
         variant,
         keys: keys.map(e => {
           return { subjectId: e.subjectId, keys: e.keys };
@@ -142,28 +140,7 @@ export default AddKey = ({
             </MenuItem>
           ))}
       </Select>
-      <Typography
-        className={classes.selectLabel}
-        variant="subtitle1"
-        color="textSecondary"
-      >
-        {t('day')}
-      </Typography>
-      <Select
-        label="day"
-        className={classes.select}
-        value={day}
-        onChange={e => setDay(e.target.value)}
-      >
-        {settings
-          .map(e => e.day)
-          .filter((value, index, self) => self.indexOf(value) === index)
-          .map(item => (
-            <MenuItem key={item} value={item}>
-              {item}
-            </MenuItem>
-          ))}
-      </Select>
+
       <Typography
         className={classes.selectLabel}
         variant="subtitle1"
@@ -194,7 +171,7 @@ export default AddKey = ({
         onChange={e => setVariant(e.target.value)}
       />
 
-      {!!examNumber && !!day && !!grade ? (
+      {!!examNumber && !!grade ? (
         <div className={classes.subjects}>
           <Typography
             className={classes.selectLabel}
@@ -204,12 +181,7 @@ export default AddKey = ({
             {t('subjects')}
           </Typography>
           {settings
-            .find(
-              e =>
-                e.grade === grade &&
-                e.examNumber === examNumber &&
-                e.day === day
-            )
+            .find(e => e.grade === grade && e.examNumber === examNumber)
             ?.subjects?.map(item => (
               <TextField
                 className={classes.textfield}

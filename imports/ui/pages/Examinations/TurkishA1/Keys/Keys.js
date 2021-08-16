@@ -10,7 +10,7 @@ import MaterialTable, { MTableToolbar } from 'material-table';
 import TableIcons from '../../../../components/MaterialTable/TableIcons';
 
 // collection
-import BtsKeys from '../../../../../api/bts/keys/btsKeys';
+import TurkishA1Keys from '../../../../../api/turkishA1/keys/keys';
 import Subjects from '../../../../../api/subjects/subjects';
 
 import AddKey from './AddKey/AddKey';
@@ -27,7 +27,7 @@ import Typography from '@material-ui/core/Typography';
 
 import { useTranslation } from 'react-i18next';
 import { userIsInRole } from '../../../../../api/users/methods';
-import BtsSettings from '../../../../../api/bts/settings/settings';
+import TurkishA1Settings from '../../../../../api/turkishA1/settings/settings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const EXAM_NAME = 'Türkçe A1';
+const EXAM_NAME = 'turkishA1';
 
 function Keys(props) {
   const classes = useStyles();
@@ -98,7 +98,7 @@ function Keys(props) {
   if (!Meteor.userId()) return null;
 
   const lookupParser = fieldName => {
-    return Meteor.apply('btsKeys.getDistinct', [fieldName], {
+    return Meteor.apply('turkishA1Keys.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       return { ...obj, [item]: item };
@@ -120,11 +120,6 @@ function Keys(props) {
       title: t('grade'),
       field: 'grade',
       lookup: lookupParser('grade'),
-    },
-    {
-      title: t('day'),
-      field: 'day',
-      lookup: lookupParser('day'),
     },
     {
       title: t('variant'),
@@ -196,7 +191,7 @@ function Keys(props) {
           Toolbar: localProps => (
             <div className={classes.toolbar}>
               <Typography className={classes.tableTitle} variant="h6">
-                {EXAM_NAME.toUpperCase() + ' ' + t('answer_keys')}
+                {t(EXAM_NAME).toUpperCase() + ' ' + t('answer_keys')}
               </Typography>
               <MTableToolbar {...localProps} />
               <AddKey
@@ -268,19 +263,19 @@ export default withTracker(props => {
     */
 
   // counters example
-  const btsKeysSub = Meteor.subscribe('btsKeys.all');
-  const keys = BtsKeys.find().fetch();
-  const keysReady = btsKeysSub.ready() && !!keys;
+  const turkishA1KeysSub = Meteor.subscribe('turkishA1Keys.all');
+  const keys = TurkishA1Keys.find().fetch();
+  const keysReady = turkishA1KeysSub.ready() && !!keys;
 
   const subjectsSub = Meteor.subscribe('subjects.all');
   const subjects = Subjects.find().fetch();
   const subjectsReady = subjectsSub.ready() && !!subjects;
 
   const settingsSub = Meteor.subscribe(
-    'btsSettings.academicYear',
+    'turkishA1Settings.academicYear',
     props.currentYear
   );
-  const settings = BtsSettings.find().fetch();
+  const settings = TurkishA1Settings.find().fetch();
 
   return {
     // remote example (if using ddp)

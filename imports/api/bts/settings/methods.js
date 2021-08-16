@@ -96,10 +96,10 @@ export const btsSettingsInsert = new ValidatedMethod({
     });
     if (recordInDB) {
       BtsSettings.update({ _id: recordInDB._id }, { $set: toInsert });
-      return recordInDB._id;
+      return 'update';
     } else {
       const keyId = BtsSettings.insert(toInsert);
-      return keyId;
+      return 'insert';
     }
   },
 });

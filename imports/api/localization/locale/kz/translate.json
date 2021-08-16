@@ -95,6 +95,9 @@
         "exam_number_not_selected" : "Емтихан нөмірі таңдалмады",
         "day_not_selected" : "Күн таңдалмады",
         "file_not_found" : "Файл табылмады",
+        "turkishA1" : "Türkçe A1",
+        "sections" : "Бөлімдер",
+        "section" : "Бөлім",
 
         "paragraph": "Introduction",
         "author": {

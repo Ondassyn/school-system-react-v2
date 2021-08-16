@@ -15,10 +15,10 @@ import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 
 // collections
-import BtsResults from '../../../../../api/bts/results/results';
+import TurkishA1Results from '../../../../../api/turkishA1/results/results';
 import Schools from '../../../../../api/schools/schools';
 import Students from '../../../../../api/students/students';
-import BtsKeys from '../../../../../api/bts/keys/btsKeys';
+import TurkishA1Keys from '../../../../../api/turkishA1/keys/keys';
 
 import useDrawer from '../../../../../api/drawer/drawerConsumer';
 
@@ -27,9 +27,9 @@ import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
 import { useTranslation } from 'react-i18next';
 import { userIsInRole } from '../../../../../api/users/methods';
-import BtsSettings from '../../../../../api/bts/settings/settings';
+import TurkishA1Settings from '../../../../../api/turkishA1/settings/settings';
 
-const EXAM_NAME = 'bts';
+const EXAM_NAME = 'turkishA1';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -103,7 +103,7 @@ const Results = props => {
   if (!Meteor.userId()) return null;
 
   const lookupParser = fieldName => {
-    return Meteor.apply('btsResults.getDistinct', [fieldName], {
+    return Meteor.apply('turkishA1Results.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       return { ...obj, [item]: item };
@@ -111,7 +111,7 @@ const Results = props => {
   };
 
   const lookupSchoolParser = fieldName => {
-    return Meteor.apply('btsResults.getDistinct', [fieldName], {
+    return Meteor.apply('turkishA1Results.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       let school = props.schools.find(e => e.schoolId === item);
@@ -233,7 +233,7 @@ const Results = props => {
             Toolbar: localProps => (
               <div className={classes.toolbar}>
                 <Typography className={classes.tableTitle} variant="h6">
-                  {EXAM_NAME.toUpperCase() + ' ' + t('results')}
+                  {t(EXAM_NAME).toUpperCase() + ' ' + t('results')}
                 </Typography>
                 <div className={classes.toolbarActions}>
                   <MTableToolbar {...localProps} />
@@ -262,11 +262,11 @@ export default withTracker(props => {
 
   // counters example
   // const resultsSub = Meteor.subscribe(
-  //   'btsResults.academicYear',
+  //   'turkishA1Results.academicYear',
   //   props.currentYear
   // );
-  const resultsSub = Meteor.subscribe('btsResults.all');
-  const results = BtsResults.find().fetch();
+  const resultsSub = Meteor.subscribe('turkishA1Results.all');
+  const results = TurkishA1Results.find().fetch();
   const resultsReady = resultsSub.ready() && !!results;
 
   const schoolsSub = Meteor.subscribe('schools.all');
@@ -277,15 +277,18 @@ export default withTracker(props => {
   const students = Students.find().fetch();
   const studentsReady = studentsSub.ready() && !!students;
 
-  const keysSub = Meteor.subscribe('btsKeys.academicYear', props.currentYear);
-  const keys = BtsKeys.find().fetch();
+  const keysSub = Meteor.subscribe(
+    'turkishA1Keys.academicYear',
+    props.currentYear
+  );
+  const keys = TurkishA1Keys.find().fetch();
   const keysReady = keysSub.ready() && !!keys;
 
   const settingsSub = Meteor.subscribe(
-    'btsSettings.academicYear',
+    'turkishA1Settings.academicYear',
     props.currentYear
   );
-  const settings = BtsSettings.find().fetch();
+  const settings = TurkishA1Settings.find().fetch();
 
   return {
     // remote example (if using ddp)

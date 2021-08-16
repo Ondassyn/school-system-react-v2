@@ -31,6 +31,7 @@ import TurkishA1Keys from '../pages/Examinations/TurkishA1/Keys/Keys';
 import TurkishA1Results from '../pages/Examinations/TurkishA1/Results/Results';
 import TurkishA1Ratings from '../pages/Examinations/TurkishA1/Ratings/Ratings';
 import TurkishA1Main from '../pages/Examinations/TurkishA1/Main/Main';
+import TurkishA1Settings from '../pages/Examinations/TurkishA1/Settings/Settings';
 
 import Students from '../pages/Students/Main';
 import Schools from '../pages/Schools/Main';
@@ -173,6 +174,12 @@ const App = props => {
                     exact
                     path="/turkishA1/ratings"
                     component={TurkishA1Ratings}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/turkishA1/settings"
+                    component={TurkishA1Settings}
                     {...props}
                   />
 

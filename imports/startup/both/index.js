@@ -21,6 +21,18 @@ import '../../api/bts/ratings/methods';
 import '../../api/bts/settings/settings';
 import '../../api/bts/settings/methods';
 
+import '../../api/turkishA1/keys/keys';
+import '../../api/turkishA1/keys/methods';
+
+import '../../api/turkishA1/results/results';
+import '../../api/turkishA1/results/methods';
+
+import '../../api/turkishA1/ratings/ratings';
+import '../../api/turkishA1/ratings/methods';
+
+import '../../api/turkishA1/settings/settings';
+import '../../api/turkishA1/settings/methods';
+
 import '../../api/schools/schools';
 import '../../api/schools/methods';
 

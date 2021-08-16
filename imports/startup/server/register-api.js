@@ -50,3 +50,16 @@ import '../../api/bts/settings/publications.js';
 
 import '../../api/idCounter/methods.js';
 import '../../api/idCounter/publications.js';
+
+// turkishA1 api
+import '../../api/turkishA1/keys/methods.js';
+import '../../api/turkishA1/keys/publications.js';
+
+import '../../api/turkishA1/results/methods.js';
+import '../../api/turkishA1/results/publications.js';
+
+import '../../api/turkishA1/ratings/methods.js';
+import '../../api/turkishA1/ratings/publications.js';
+
+import '../../api/turkishA1/settings/methods.js';
+import '../../api/turkishA1/settings/publications.js';

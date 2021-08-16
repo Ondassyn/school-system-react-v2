@@ -65,8 +65,8 @@ export const turkishA1SettingsInsert = new ValidatedMethod({
     academicYear: { type: String },
     examNumber: { type: SimpleSchema.Integer },
     grade: { type: SimpleSchema.Integer },
-    subjects: Array,
-    'subjects.$': {
+    sections: Array,
+    'sections.$': {
       type: Object,
       blackbox: true,
     },
@@ -81,10 +81,10 @@ export const turkishA1SettingsInsert = new ValidatedMethod({
     });
     if (recordInDB) {
       TurkishA1Settings.update({ _id: recordInDB._id }, { $set: toInsert });
-      return recordInDB._id;
+      return 'update';
     } else {
       const keyId = TurkishA1Settings.insert(toInsert);
-      return keyId;
+      return 'insert';
     }
   },
 });

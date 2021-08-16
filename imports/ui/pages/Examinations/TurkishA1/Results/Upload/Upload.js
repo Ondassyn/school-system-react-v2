@@ -12,7 +12,7 @@ import { Tooltip } from '@material-ui/core';
 
 import Input from '@material-ui/core/Input';
 
-import { upload } from '../../../../../../api/bts/results/upload';
+import { upload } from '../../../../../../api/turkishA1/results/upload';
 import useSnackbars from '../../../../../../api/notifications/snackbarConsumer';
 import { Button, IconButton } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +43,6 @@ export const Upload = ({ setBlocking, settings, currentYear }) => {
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [examNumber, setExamNumber] = useState('');
-  const [day, setDay] = useState('');
   const [file, setFile] = useState(null);
 
   const showModal = () => {
@@ -76,14 +75,9 @@ export const Upload = ({ setBlocking, settings, currentYear }) => {
       return;
     }
 
-    if (!day) {
-      showSnackbar({ message: 'day_not_selected', severity: 'error' });
-      return;
-    }
-
     closeModal();
     setBlocking(true);
-    await upload({ data, academicYear: currentYear, examNumber, day })
+    await upload({ data, academicYear: currentYear, examNumber })
       .then(value => showSnackbar({ message: value, severity: 'success' }))
       .catch(value => showSnackbar({ message: value, severity: 'error' }));
     setBlocking(false);
@@ -111,20 +105,6 @@ export const Upload = ({ setBlocking, settings, currentYear }) => {
         >
           {settings
             .map(e => e.examNumber)
-            .filter((value, index, self) => self.indexOf(value) === index)
-            .map(item => (
-              <MenuItem key={item} value={item}>
-                {item}
-              </MenuItem>
-            ))}
-        </Select>
-        {/* <FormHelperText>Placeholder</FormHelperText> */}
-      </FormControl>
-      <FormControl className={classes.formControl}>
-        <InputLabel>{t('day')}</InputLabel>
-        <Select value={day} onChange={e => setDay(e.target.value)}>
-          {settings
-            .map(e => e.day)
             .filter((value, index, self) => self.indexOf(value) === index)
             .map(item => (
               <MenuItem key={item} value={item}>

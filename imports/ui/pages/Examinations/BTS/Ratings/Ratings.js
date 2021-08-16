@@ -137,7 +137,7 @@ const Ratings = props => {
   return (
     <div className="ratings-page">
       <MaterialTable
-        title="BTS Ratings"
+        title={EXAM_NAME.toUpperCase() + ' ' + t('rating')}
         columns={columns}
         data={props.ratings.map(result => {
           let school = props.schools.find(e => e.schoolId === result.schoolId);

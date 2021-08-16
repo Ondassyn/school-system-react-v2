@@ -12,7 +12,7 @@ import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import { userIsInRole } from '../../../../../api/users/methods';
 import { useTranslation } from 'react-i18next';
 
-const EXAM_NAME = 'bts';
+const EXAM_NAME = 'turkishA1';
 
 export default Main = props => {
   const [t, i18n] = useTranslation();
@@ -59,7 +59,7 @@ export default Main = props => {
   }, [i18n.language]);
 
   useEffect(() => {
-    props.history.push('/bts/keys');
+    props.history.push('/turkishA1/keys');
   });
 
   useEffect(() => {

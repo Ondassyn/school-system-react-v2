@@ -24,9 +24,9 @@ import ChevronRight from '@material-ui/icons/ChevronRight';
 
 import SubjectList from './SubjectList';
 import {
-  btsSettingsDelete,
-  btsSettingsInsert,
-} from '../../../../../../api/bts/settings/methods';
+  turkishA1SettingsDelete,
+  turkishA1SettingsInsert,
+} from '../../../../../../api/turkishA1/settings/methods';
 import useSnackbars from '../../../../../../api/notifications/snackbarConsumer';
 import useDialogs from '../../../../../../api/dialogs/dialogConsumer';
 
@@ -52,44 +52,42 @@ export default Setting = ({ subjects, setting, grade }) => {
   const [examNumber, setExamNumber] = useState(
     setting ? setting.examNumber : 1
   );
-  const [day, setDay] = useState(setting ? setting.day : 1);
-  const [subjectList, setSubjectList] = useState(
+
+  const [sections, setSections] = useState(
     setting
-      ? setting.subjects.map(s => {
-          return { index: Math.random(), subjectId: s.subjectId };
+      ? setting.sections.map(s => {
+          return { index: Math.random(), sectionName: s.sectionName };
         })
-      : [{ index: Math.random(), subjectId: '' }]
+      : [{ index: Math.random(), sectionName: '' }]
   );
 
   const reset = () => {
     setExamNumber(1);
-    setDay(1);
-    setSubjectList([{ index: Math.random(), subjectId: '' }]);
+    setSections([{ index: Math.random(), sectionName: '' }]);
   };
 
   const addRow = e => {
-    setSubjectList(old => [...old, { index: Math.random(), subjectId: '' }]);
+    setSections(old => [...old, { index: Math.random(), sectionName: '' }]);
   };
 
   const deleteRow = record => {
-    setSubjectList(subjectList.filter(r => r !== record));
+    setSections(sections.filter(r => r !== record));
   };
 
-  const setSubjectId = (idx, value) => {
-    let old = [...subjectList];
-    old[idx].subjectId = value;
-    setSubjectList(old);
+  const setSectionName = (idx, value) => {
+    let old = [...sections];
+    old[idx].sectionName = value;
+    setSections(old);
   };
 
   const addSetting = () => {
-    btsSettingsInsert.call(
+    turkishA1SettingsInsert.call(
       {
         academicYear: CurrentYear,
         examNumber,
         grade,
-        day,
-        subjects: subjectList.map(e => {
-          return { subjectId: e.subjectId };
+        sections: sections.map(e => {
+          return { sectionName: e.sectionName };
         }),
       },
       (err, res) => {
@@ -103,7 +101,7 @@ export default Setting = ({ subjects, setting, grade }) => {
   };
 
   const deleteSetting = () => {
-    btsSettingsDelete.call({ _id: setting._id }, (err, res) => {
+    turkishA1SettingsDelete.call({ _id: setting._id }, (err, res) => {
       if (err) showSnackbar({ message: err.message, severity: 'error' });
       else showSnackbar({ message: t('done'), severity: 'success' });
     });
@@ -127,31 +125,13 @@ export default Setting = ({ subjects, setting, grade }) => {
           </IconButton>
         </Typography>
 
-        <FormControl className={classes.formControl}>
-          <Typography variant="subtitle1">
-            {t('day')}
-            <IconButton
-              onClick={() => {
-                day > 1 && setDay(number => --number);
-              }}
-            >
-              <ChevronLeft />
-            </IconButton>
-            {day}
-            <IconButton onClick={() => setDay(number => ++number)}>
-              <ChevronRight />
-            </IconButton>
-          </Typography>
-        </FormControl>
-
         <Divider variant="middle" />
 
         <SubjectList
-          subjects={subjects}
-          subjectList={subjectList}
+          sections={sections}
           addRow={addRow}
           deleteRow={deleteRow}
-          setSubjectId={setSubjectId}
+          setSectionName={setSectionName}
         />
       </CardContent>
       <StyledCardActions>

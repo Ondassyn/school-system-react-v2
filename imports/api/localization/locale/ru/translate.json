@@ -95,6 +95,9 @@
         "exam_number_not_selected" : "Номер экзамена не выбран",
         "day_not_selected" : "День не выбран",
         "file_not_found" : "Файл не найден",
+        "turkishA1" : "Türkçe A1",
+        "sections" : "Секции",
+        "section" : "Секция",
 
         "paragraph": "Introduction",
         "author": {

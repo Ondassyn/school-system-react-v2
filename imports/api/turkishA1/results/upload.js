@@ -1,4 +1,4 @@
-import TurkishA1Keys from '../keys/turkishA1Keys';
+import TurkishA1Keys from '../keys/keys';
 import Schools from '../../schools/schools';
 import Students from '../../students/students';
 
