@@ -206,7 +206,10 @@ export default function MiniDrawer({ children, mainTitle, items }) {
               </Button>
               <Popper
                 title={t('exams')}
-                items={[{ title: t('bts'), link: '/bts' }]}
+                items={[
+                  { title: t('bts'), link: '/bts' },
+                  { title: t('turkishA1'), link: '/turkishA1' },
+                ]}
               />
             </div>
           )}

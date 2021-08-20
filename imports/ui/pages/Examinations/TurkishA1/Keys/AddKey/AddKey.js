@@ -77,9 +77,9 @@ export default AddKey = ({
   const [keys, setKeys] = useState(
     initialData
       ? initialData.keys.map(e => {
-          return { subjectId: e.subjectId, keys: e.keys };
+          return { sectionName: e.sectionName, keys: e.keys };
         })
-      : [{ subjectId: '', keys: '' }]
+      : []
   );
 
   const { showSnackbar } = useSnackbars();
@@ -102,7 +102,7 @@ export default AddKey = ({
         grade,
         variant,
         keys: keys.map(e => {
-          return { subjectId: e.subjectId, keys: e.keys };
+          return { sectionName: e.sectionName, keys: e.keys };
         }),
       },
       (err, res) => {
@@ -178,32 +178,31 @@ export default AddKey = ({
             variant="subtitle1"
             color="textSecondary"
           >
-            {t('subjects')}
+            {t('sections')}
           </Typography>
           {settings
             .find(e => e.grade === grade && e.examNumber === examNumber)
-            ?.subjects?.map(item => (
+            ?.sections?.map(item => (
               <TextField
                 className={classes.textfield}
-                label={eval(
-                  `subjects.find(el => el.subjectId === item.subjectId).name_${i18n.language}`
-                )}
-                key={item.subjectId}
+                label={item.sectionName}
+                key={item.sectionName}
                 value={
-                  keys.some(e => e.subjectId === item.subjectId)
-                    ? keys.find(e => e.subjectId === item.subjectId)?.keys
+                  keys.some(e => e.sectionName === item.sectionName)
+                    ? keys.find(e => e.sectionName === item.sectionName)?.keys
                     : ''
                 }
                 onChange={e => {
-                  if (keys.some(el => el.subjectId === item.subjectId)) {
+                  if (keys.some(el => el.sectionName === item.sectionName)) {
                     const keysCopy = [...keys];
-                    keysCopy.find(el => el.subjectId === item.subjectId).keys =
-                      e.target.value;
+                    keysCopy.find(
+                      el => el.sectionName === item.sectionName
+                    ).keys = e.target.value;
                     setKeys(keysCopy);
                   } else {
                     setKeys([
                       ...keys,
-                      { subjectId: item.subjectId, keys: e.target.value },
+                      { sectionName: item.sectionName, keys: e.target.value },
                     ]);
                   }
                 }}

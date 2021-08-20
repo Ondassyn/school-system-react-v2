@@ -12,6 +12,16 @@ if (Meteor.isServer) {
     return this.ready();
   });
 
+  Meteor.publish('turkishA1Results.school', function(schoolId) {
+    if (
+      Roles.userIsInRole(this.userId, 'admin') ||
+      Roles.userIsInRole(this.userId, 'school')
+    ) {
+      return TurkishA1Results.find({ schoolId });
+    }
+    return this.ready();
+  });
+
   Meteor.publish('turkishA1Results.academicYear', function(academicYear) {
     if (Roles.userIsInRole(this.userId, 'admin')) {
       return TurkishA1Results.find({ academicYear });

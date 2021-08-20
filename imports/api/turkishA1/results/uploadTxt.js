@@ -4,12 +4,9 @@ import Students from '../../students/students';
 
 import { turkishA1ResultsInsert } from './methods';
 import { calculateRating } from './calculateRating';
-import { useTranslation } from 'react-i18next';
 
-export const upload = ({ data, academicYear, examNumber }) => {
+export const uploadTxt = ({ t, data, academicYear, examNumber }) => {
   const INTERVAL = 5;
-
-  const [t, i18n] = useTranslation();
 
   return new Promise((resolve, reject) => {
     let lines = data.trim().split('\n');
@@ -30,13 +27,15 @@ export const upload = ({ data, academicYear, examNumber }) => {
       let school = Schools.findOne({ schoolId });
 
       if (!school)
-        reject(`${t('school_id_not_found')}, ${t('line')} ${i}: {${schoolId}}`);
+        reject(
+          `${t('school_id_not_found')}, ${t('line')} ${i + 1}: {${schoolId}}`
+        );
 
       let student = Students.findOne({ studentId: +studentId });
 
       if (!student)
         reject(
-          `${t('student_id_not_found')}, ${t('line')} ${i}: {${studentId}}`
+          `${t('student_id_not_found')}, ${t('line')} ${i + 1}: {${studentId}}`
         );
 
       let keys = TurkishA1Keys.findOne({
@@ -48,7 +47,7 @@ export const upload = ({ data, academicYear, examNumber }) => {
 
       if (!keys)
         reject(
-          `${t('keys_not_found')}, ${t('line')} ${i}: {${t(
+          `${t('keys_not_found')}, ${t('line')} ${i + 1}: {${t(
             'variant'
           )}: ${variant}, ${t('grade')}: ${student.grade}}`
         );
@@ -61,41 +60,39 @@ export const upload = ({ data, academicYear, examNumber }) => {
         grade: +student.grade,
         division: student.division,
         variant,
-        surname,
-        name,
-        languageGroup: student.languageGroup,
-        electiveGroup: student.electiveGroup,
+        surname: student.surname,
+        name: student.name,
         total: 0,
         results: [],
       };
 
       let sliceIndex = 0;
       keys.keys.map(key => {
-        const { subjectId, keys: subjectKeys } = key;
-        !subjectKeys.length &&
+        const { sectionName, keys: sectionKeys } = key;
+        !sectionKeys.length &&
           reject(
-            `${t('keys_not_found')}, ${t('line')} ${i}: {${t(
+            `${t('keys_not_found')}, ${t('line')} ${i + 1}: {${t(
               'variant'
-            )}: ${variant}, ${t('subjectId')}: ${subjectId}}`
+            )}: ${variant}, ${t('section')}: ${sectionName}}`
           );
 
-        let subjectResult = 0;
-        const questionsN = subjectKeys.length;
-        const subjectAnswers = answers.substring(
+        let sectionResult = 0;
+        const questionsN = sectionKeys.length;
+        const sectionAnswers = answers.substring(
           sliceIndex,
           (sliceIndex += questionsN * INTERVAL)
         );
-        for (let index = 0; index * INTERVAL < subjectAnswers.length; index++) {
-          const studentAnswer = subjectAnswers
+        for (let index = 0; index * INTERVAL < sectionAnswers.length; index++) {
+          const studentAnswer = sectionAnswers
             .substring(index * INTERVAL, index * INTERVAL + INTERVAL)
             .trim()
             .toUpperCase();
-          if (subjectKeys[index].toUpperCase() === studentAnswer) {
-            subjectResult++;
+          if (sectionKeys[index].toUpperCase() === studentAnswer) {
+            sectionResult++;
             studentResult['total']++;
           }
         }
-        studentResult.results.push({ subjectId, result: subjectResult });
+        studentResult.results.push({ sectionName, result: sectionResult });
       });
 
       turkishA1ResultsInsert.call(studentResult, (err, res) => {
@@ -103,7 +100,7 @@ export const upload = ({ data, academicYear, examNumber }) => {
       });
     }
 
-    calculateRating({ academicYear, examNumber }).catch(value => {
+    calculateRating({ t, academicYear, examNumber }).catch(value => {
       reject(value);
     });
 

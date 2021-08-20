@@ -32,11 +32,10 @@ const Ratings = props => {
     let headers = [];
     props.ratings?.map(rating => {
       rating.averages?.map(average => {
-        !headers.some(e => e.field === average.subjectId) &&
+        !headers.some(e => e.field === average.sectionName) &&
           headers.push({
-            title: props.subjects?.find(s => s.subjectId === average.subjectId)
-              .name_en,
-            field: average.subjectId,
+            title: average.sectionName,
+            field: average.sectionName,
           });
       });
     });
@@ -153,7 +152,7 @@ const Ratings = props => {
             total: result.totalAverage.toFixed(2),
           };
           result.averages?.map(average => {
-            returnObject[average.subjectId] = average.average.toFixed(2);
+            returnObject[average.sectionName] = average.average.toFixed(2);
           });
           return returnObject;
         })}
@@ -221,10 +220,6 @@ export default withTracker(props => {
   const ratings = TurkishA1Ratings.find().fetch();
   const ratingsReady = ratingsSub.ready() && !!ratings;
 
-  const subjectsSub = Meteor.subscribe('subjects.all');
-  const subjects = Subjects.find().fetch();
-  const subjectsReady = subjectsSub.ready() && !!subjects;
-
   const schoolsSub = Meteor.subscribe('schools.all');
   const schools = Schools.find().fetch();
   const schoolsReady = schoolsSub.ready() && !!schools;
@@ -234,7 +229,6 @@ export default withTracker(props => {
     // usersReady,
     // users,
     ratings,
-    subjects,
     schools,
   };
 })(Ratings);

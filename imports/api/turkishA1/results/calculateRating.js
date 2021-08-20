@@ -1,11 +1,8 @@
-import { useTranslation } from 'react-i18next';
 import Schools from '../../schools/schools';
 import { turkishA1RatingsInsert } from '../ratings/methods';
 import TurkishA1Results from './results';
 
-export const calculateRating = ({ academicYear, examNumber }) => {
-  const [t, i18n] = useTranslation();
-
+export const calculateRating = ({ t, academicYear, examNumber }) => {
   return new Promise((resolve, reject) => {
     let schools = Schools.find().fetch();
     schools.map(school => {
@@ -30,11 +27,16 @@ export const calculateRating = ({ academicYear, examNumber }) => {
 
         results.map(result => {
           result.results.map(r => {
-            if (totals.some(e => e.subjectId === r.subjectId)) {
-              totals.find(e => e.subjectId === r.subjectId).total += r.result;
-              totals.find(e => e.subjectId === r.subjectId).n++;
+            if (totals.some(e => e.sectionName === r.sectionName)) {
+              totals.find(e => e.sectionName === r.sectionName).total +=
+                r.result;
+              totals.find(e => e.sectionName === r.sectionName).n++;
             } else {
-              totals.push({ subjectId: r.subjectId, total: r.result, n: 1 });
+              totals.push({
+                sectionName: r.sectionName,
+                total: r.result,
+                n: 1,
+              });
             }
           });
           totalSum += result.total;
@@ -43,7 +45,7 @@ export const calculateRating = ({ academicYear, examNumber }) => {
         totals.map(t => {
           t.n &&
             rating.averages.push({
-              subjectId: t.subjectId,
+              sectionName: t.sectionName,
               average: t.total / t.n,
             });
         });

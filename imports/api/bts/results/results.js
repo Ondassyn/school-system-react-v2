@@ -21,7 +21,7 @@ const Schema = new SimpleSchema({
     type: String,
   },
   schoolId: {
-    type: String,
+    type: SimpleSchema.Integer,
   },
   grade: {
     type: SimpleSchema.Integer,

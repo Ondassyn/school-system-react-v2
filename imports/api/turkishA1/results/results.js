@@ -18,7 +18,7 @@ const Schema = new SimpleSchema({
     type: SimpleSchema.Integer,
   },
   studentId: {
-    type: String,
+    type: SimpleSchema.Integer,
   },
   schoolId: {
     type: String,
@@ -31,6 +31,7 @@ const Schema = new SimpleSchema({
   },
   variant: {
     type: String,
+    optional: true,
   },
   surname: {
     type: String,
@@ -38,16 +39,8 @@ const Schema = new SimpleSchema({
   name: {
     type: String,
   },
-  languageGroup: {
-    type: String,
-    optional: true,
-  },
-  electiveGroup: {
-    type: String,
-    optional: true,
-  },
   total: {
-    type: SimpleSchema.Integer,
+    type: Number,
   },
   results: Array,
   'results.$': {

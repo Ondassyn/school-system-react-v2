@@ -55,6 +55,23 @@ const Results = props => {
   const [blocking, setBlocking] = useState(false);
   const [t, i18n] = useTranslation();
   const { setDrawer, setDrawerTitle } = useDrawer();
+  const [columns, setColumns] = useState([]);
+
+  let COLUMNS = [];
+
+  useEffect(() => {
+    let headers = [];
+    props.results?.map(result => {
+      result.results?.map(r => {
+        !headers.some(e => e.field === r.sectionName) &&
+          headers.push({
+            title: r.sectionName,
+            field: r.sectionName,
+          });
+      });
+    });
+    setColumns(COLUMNS.concat(headers));
+  }, [props.results, i18n.language]);
 
   useEffect(() => {
     const DRAWER_TITLE = {
@@ -120,7 +137,7 @@ const Results = props => {
     }, {});
   };
 
-  const COLUMNS = [
+  COLUMNS = [
     {
       title: t('year'),
       field: 'academicYear',
@@ -165,13 +182,13 @@ const Results = props => {
       <div>
         <MaterialTable
           title=""
-          columns={COLUMNS}
+          columns={columns}
           data={props.results.map(result => {
             let school = props.schools.find(
               e => e.schoolId === result.schoolId
             );
             let schoolName = school ? school.shortName : '';
-            return {
+            let returnObject = {
               academicYear: result.academicYear,
               examNumber: result.examNumber,
               schoolName,
@@ -181,6 +198,10 @@ const Results = props => {
               name: result.name,
               total: result.total,
             };
+            result.results?.map(r => {
+              returnObject[r.sectionName] = r.result;
+            });
+            return returnObject;
           })}
           icons={TableIcons}
           options={{
@@ -241,6 +262,9 @@ const Results = props => {
                     setBlocking={setBlocking}
                     currentYear={props.currentYear}
                     settings={props.settings}
+                    results={props.results}
+                    students={props.students}
+                    schools={props.schools}
                   />
                 </div>
               </div>
@@ -265,17 +289,26 @@ export default withTracker(props => {
   //   'turkishA1Results.academicYear',
   //   props.currentYear
   // );
-  const resultsSub = Meteor.subscribe('turkishA1Results.all');
-  const results = TurkishA1Results.find().fetch();
-  const resultsReady = resultsSub.ready() && !!results;
 
   const schoolsSub = Meteor.subscribe('schools.all');
   const schools = Schools.find().fetch();
   const schoolsReady = schoolsSub.ready() && !!schools;
 
-  const studentsSub = Meteor.subscribe('students.all');
+  if (Roles.userIsInRole(Meteor.userId(), 'admin')) {
+    Meteor.subscribe('turkishA1Results.all');
+  } else if (Roles.userIsInRole(Meteor.userId(), 'school')) {
+    const schoolId = schools.find(e => e.userId === Meteor.userId())?.schoolId;
+    Meteor.subscribe('turkishA1Results.school', schoolId);
+  }
+  const results = TurkishA1Results.find().fetch();
+
+  if (Roles.userIsInRole(Meteor.userId(), 'admin')) {
+    Meteor.subscribe('students.all');
+  } else if (Roles.userIsInRole(Meteor.userId(), 'school')) {
+    const schoolId = schools.find(e => e.userId === Meteor.userId())?.schoolId;
+    Meteor.subscribe('students.school', schoolId);
+  }
   const students = Students.find().fetch();
-  const studentsReady = studentsSub.ready() && !!students;
 
   const keysSub = Meteor.subscribe(
     'turkishA1Keys.academicYear',
@@ -294,7 +327,6 @@ export default withTracker(props => {
     // remote example (if using ddp)
     // usersReady,
     // users,
-    resultsReady,
     results,
     schools,
     students,

@@ -6,14 +6,20 @@ import TurkishA1Settings from './settings';
 
 if (Meteor.isServer) {
   Meteor.publish('turkishA1Settings.all', function() {
-    if (Roles.userIsInRole(this.userId, 'admin')) {
+    if (
+      Roles.userIsInRole(this.userId, 'admin') ||
+      Roles.userIsInRole(this.userId, 'school')
+    ) {
       return TurkishA1Settings.find();
     }
     return this.ready();
   });
 
   Meteor.publish('turkishA1Settings.academicYear', function(academicYear) {
-    if (Roles.userIsInRole(this.userId, 'admin')) {
+    if (
+      Roles.userIsInRole(this.userId, 'admin') ||
+      Roles.userIsInRole(this.userId, 'school')
+    ) {
       return TurkishA1Settings.find({ academicYear });
     }
     return this.ready();

@@ -61,7 +61,41 @@ export const turkishA1ResultsGetDistinct = new ValidatedMethod({
 export const turkishA1ResultsInsert = new ValidatedMethod({
   name: 'turkishA1Results.insert',
   mixins: [CallPromiseMixin],
-  validate: null,
+  validate: new SimpleSchema({
+    academicYear: {
+      type: String,
+    },
+    examNumber: {
+      type: SimpleSchema.Integer,
+    },
+    schoolId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
+    studentId: SimpleSchema.oneOf(
+      { type: String, optional: true },
+      { type: SimpleSchema.Integer, optional: true }
+    ),
+    grade: SimpleSchema.oneOf(String, SimpleSchema.Integer),
+    division: {
+      type: String,
+    },
+    variant: {
+      type: String,
+      optional: true,
+    },
+    surname: {
+      type: String,
+    },
+    name: {
+      type: String,
+    },
+    total: {
+      type: Number,
+    },
+    results: Array,
+    'results.$': {
+      type: Object,
+      blackbox: true,
+    },
+  }).validator(),
   checkLoggedInError,
   run(studentResult) {
     // console.log('counters.insert', _id);

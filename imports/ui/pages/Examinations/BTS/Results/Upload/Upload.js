@@ -83,7 +83,7 @@ export const Upload = ({ setBlocking, settings, currentYear }) => {
 
     closeModal();
     setBlocking(true);
-    await upload({ data, academicYear: currentYear, examNumber, day })
+    await upload({ t, data, academicYear: currentYear, examNumber, day })
       .then(value => showSnackbar({ message: value, severity: 'success' }))
       .catch(value => showSnackbar({ message: value, severity: 'error' }));
     setBlocking(false);

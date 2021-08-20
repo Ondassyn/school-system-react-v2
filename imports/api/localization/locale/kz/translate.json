@@ -98,6 +98,11 @@
         "turkishA1" : "Türkçe A1",
         "sections" : "Бөлімдер",
         "section" : "Бөлім",
+        "grade_not_selected" : "Сынып таңдалмады",
+        "file_type" : "Файл пішімі",
+        "example" : "Үлгі",
+        "example_download" : "Төмендегі үлгіні жүктеп, нәтижелерді толтырыңыз және файлды жүктеңіз.",
+        "example_note" : "* Нәтижелерден басқа, файлдағы ештеңе өзгертпеңіз (сұрыптау рұқсат етілген)",
 
         "paragraph": "Introduction",
         "author": {

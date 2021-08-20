@@ -98,6 +98,11 @@
         "turkishA1" : "Türkçe A1",
         "sections" : "Sections",
         "section" : "Section",
+        "grade_not_selected" : "Grade was not selected",
+        "file_type" : "File type",
+        "example" : "Example",
+        "example_download" : "Download the example below, fill the results and upload it",
+        "example_note" : "* Do not change anything in the file besides the results (sorting is allowed)",
 
         "paragraph": "Introduction",
         "author": {

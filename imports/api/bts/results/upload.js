@@ -6,10 +6,8 @@ import { btsResultsInsert } from './methods';
 import { calculateRating } from './calculateRating';
 import { useTranslation } from 'react-i18next';
 
-export const upload = ({ data, academicYear, examNumber, day }) => {
+export const upload = ({ t, data, academicYear, examNumber, day }) => {
   const INTERVAL = 5;
-
-  const [t, i18n] = useTranslation();
 
   return new Promise((resolve, reject) => {
     let lines = data.trim().split('\n');
@@ -30,13 +28,15 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
       let school = Schools.findOne({ schoolId });
 
       if (!school)
-        reject(`${t('school_id_not_found')}, ${t('line')} ${i}: {${schoolId}}`);
+        reject(
+          `${t('school_id_not_found')}, ${t('line')} ${i + 1}: {${schoolId}}`
+        );
 
       let student = Students.findOne({ studentId: +studentId });
 
       if (!student)
         reject(
-          `${t('student_id_not_found')}, ${t('line')} ${i}: {${studentId}}`
+          `${t('student_id_not_found')}, ${t('line')} ${i + 1}: {${studentId}}`
         );
 
       let keys = BtsKeys.findOne({
@@ -49,7 +49,7 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
 
       if (!keys)
         reject(
-          `${t('keys_not_found')}, ${t('line')} ${i}: {${t(
+          `${t('keys_not_found')}, ${t('line')} ${i + 1}: {${t(
             'variant'
           )}: ${variant}, ${t('grade')}: ${student.grade}}`
         );
@@ -63,8 +63,8 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
         division: student.division,
         day,
         variant,
-        surname,
-        name,
+        surname: student.surname,
+        name: student.name,
         languageGroup: student.languageGroup,
         electiveGroup: student.electiveGroup,
         total: 0,
@@ -76,7 +76,7 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
         const { subjectId, keys: subjectKeys } = key;
         !subjectKeys.length &&
           reject(
-            `${t('keys_not_found')}, ${t('line')} ${i}: {${t(
+            `${t('keys_not_found')}, ${t('line')} ${i + 1}: {${t(
               'variant'
             )}: ${variant}, ${t('subjectId')}: ${subjectId}}`
           );
@@ -105,7 +105,7 @@ export const upload = ({ data, academicYear, examNumber, day }) => {
       });
     }
 
-    calculateRating({ academicYear, examNumber }).catch(value => {
+    calculateRating({ t, academicYear, examNumber }).catch(value => {
       reject(value);
     });
 

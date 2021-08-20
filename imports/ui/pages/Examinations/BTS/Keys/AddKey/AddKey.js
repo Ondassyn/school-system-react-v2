@@ -80,7 +80,7 @@ export default AddKey = ({
       ? initialData.keys.map(e => {
           return { subjectId: e.subjectId, keys: e.keys };
         })
-      : [{ subjectId: '', keys: '' }]
+      : []
   );
 
   const { showSnackbar } = useSnackbars();
