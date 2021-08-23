@@ -79,7 +79,13 @@ export const Upload = ({
 
     closeModal();
     setBlocking(true);
-    await uploadTxt({ t, data, academicYear: currentYear, examNumber })
+    await uploadTxt({
+      t,
+      data,
+      academicYear: currentYear,
+      examNumber,
+      settings,
+    })
       .then(value => showSnackbar({ message: value, severity: 'success' }))
       .catch(value => showSnackbar({ message: value, severity: 'error' }));
     setBlocking(false);
@@ -95,7 +101,7 @@ export const Upload = ({
 
     setBlocking(true);
     await readXlsxFile(data).then(rows => {
-      uploadXlsx({ t, rows, academicYear: currentYear, examNumber })
+      uploadXlsx({ t, rows, academicYear: currentYear, examNumber, settings })
         .then(value => showSnackbar({ message: value, severity: 'success' }))
         .catch(value => showSnackbar({ message: value, severity: 'error' }));
     });

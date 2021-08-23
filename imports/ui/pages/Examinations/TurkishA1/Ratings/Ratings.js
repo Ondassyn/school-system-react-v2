@@ -3,12 +3,19 @@ import React, { useState, useEffect } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
+import { Typography } from '@material-ui/core';
+
+import { makeStyles } from '@material-ui/core';
 
 import MaterialTable, { MTableToolbar } from 'material-table';
 import TableIcons from '../../../../components/MaterialTable/TableIcons';
 
+import BlockUi from 'react-block-ui';
+import 'react-block-ui/style.css';
+
 // collections
 import TurkishA1Ratings from '../../../../../api/turkishA1/ratings/ratings';
+import TurkishA1Results from '../../../../../api/turkishA1/results/results';
 import Subjects from '../../../../../api/subjects/subjects';
 import Schools from '../../../../../api/schools/schools';
 
@@ -20,10 +27,33 @@ import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
 import { useTranslation } from 'react-i18next';
 import { userIsInRole } from '../../../../../api/users/methods';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
+import TurkishA1Settings from '../../../../../api/turkishA1/settings/settings';
+import { CalculateRating } from './CalculateRating/CalculateRating';
 
 const EXAM_NAME = 'turkishA1';
 
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '1rem 2rem 0 2rem',
+  },
+  toolbarActions: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  actions: {
+    display: 'flex',
+  },
+}));
+
 const Ratings = props => {
+  const classes = useStyles();
+  const [blocking, setBlocking] = useState(false);
   const [columns, setColumns] = useState([]);
   const { setDrawer, setDrawerTitle } = useDrawer();
   const [t, i18n] = useTranslation();
@@ -40,7 +70,7 @@ const Ratings = props => {
       });
     });
     setColumns(COLUMNS.concat(headers));
-  }, [props.ratings]);
+  }, [props.ratings, i18n.language]);
 
   useEffect(() => {
     const DRAWER_TITLE = {
@@ -136,7 +166,7 @@ const Ratings = props => {
   return (
     <div className="ratings-page">
       <MaterialTable
-        title={t(EXAM_NAME).toUpperCase() + ' ' + t('rating')}
+        title=""
         columns={columns}
         data={props.ratings.map(result => {
           let school = props.schools.find(e => e.schoolId === result.schoolId);
@@ -203,6 +233,23 @@ const Ratings = props => {
             lastTooltip: t('last_page'),
           },
         }}
+        components={{
+          Toolbar: localProps => (
+            <div className={classes.toolbar}>
+              <Typography className={classes.tableTitle} variant="h6">
+                {t(EXAM_NAME).toUpperCase() + ' ' + t('rating')}
+              </Typography>
+              <div className={classes.toolbarActions}>
+                <MTableToolbar {...localProps} />
+                <CalculateRating
+                  setBlocking={setBlocking}
+                  currentYear={props.currentYear}
+                  settings={props.settings}
+                />
+              </div>
+            </div>
+          ),
+        }}
       />
     </div>
   );
@@ -218,17 +265,31 @@ export default withTracker(props => {
 
   const ratingsSub = Meteor.subscribe('turkishA1Ratings.all');
   const ratings = TurkishA1Ratings.find().fetch();
-  const ratingsReady = ratingsSub.ready() && !!ratings;
+
+  if (Roles.userIsInRole(Meteor.userId(), 'admin')) {
+    Meteor.subscribe('turkishA1Results.all');
+  } else if (Roles.userIsInRole(Meteor.userId(), 'school')) {
+    const schoolId = schools.find(e => e.userId === Meteor.userId())?.schoolId;
+    Meteor.subscribe('turkishA1Results.school', schoolId);
+  }
+  const results = TurkishA1Results.find().fetch();
 
   const schoolsSub = Meteor.subscribe('schools.all');
   const schools = Schools.find().fetch();
-  const schoolsReady = schoolsSub.ready() && !!schools;
+
+  const settingsSub = Meteor.subscribe(
+    'turkishA1Settings.academicYear',
+    props.currentYear
+  );
+  const settings = TurkishA1Settings.find().fetch();
 
   return {
     // remote example (if using ddp)
     // usersReady,
     // users,
     ratings,
+    results,
     schools,
+    settings,
   };
 })(Ratings);

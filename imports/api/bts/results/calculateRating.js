@@ -3,7 +3,7 @@ import Schools from '../../schools/schools';
 import { btsRatingsInsert } from '../ratings/methods';
 import BtsResults from './results';
 
-export const calculateRating = ({ t, academicYear, examNumber }) => {
+export const calculateRating = ({ t, academicYear, examNumber, settings }) => {
   return new Promise((resolve, reject) => {
     let schools = Schools.find().fetch();
     schools.map(school => {

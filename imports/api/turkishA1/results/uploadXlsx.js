@@ -5,7 +5,7 @@ import Students from '../../students/students';
 import { turkishA1ResultsInsert } from './methods';
 import { calculateRating } from './calculateRating';
 
-export const uploadXlsx = ({ t, rows, academicYear, examNumber }) => {
+export const uploadXlsx = ({ t, rows, academicYear, examNumber, settings }) => {
   const INTERVAL = 5;
 
   return new Promise((resolve, reject) => {
@@ -81,7 +81,7 @@ export const uploadXlsx = ({ t, rows, academicYear, examNumber }) => {
       }
     }
 
-    calculateRating({ t, academicYear, examNumber }).catch(value => {
+    calculateRating({ t, academicYear, examNumber, settings }).catch(value => {
       reject(value);
     });
 

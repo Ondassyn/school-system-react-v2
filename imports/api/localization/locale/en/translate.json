@@ -103,6 +103,7 @@
         "example" : "Example",
         "example_download" : "Download the example below, fill the results and upload it",
         "example_note" : "* Do not change anything in the file besides the results (sorting is allowed)",
+        "calculate" : "Calculate rating",
 
         "paragraph": "Introduction",
         "author": {
