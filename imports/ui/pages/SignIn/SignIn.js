@@ -14,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useTranslation } from 'react-i18next';
 import useSnackbars from '../../../api/notifications/snackbarConsumer';
+import useDrawer from '../../../api/drawer/drawerConsumer';
 
 function Copyright() {
   return (
@@ -51,6 +52,7 @@ const useStyles = makeStyles(theme => ({
 export default SignIn = props => {
   const classes = useStyles();
   const [t, i18n] = useTranslation();
+  const { setDrawer, setDrawerTitle } = useDrawer();
   const { showSnackbar } = useSnackbars();
 
   const [username, setUsername] = useState('');
@@ -58,9 +60,14 @@ export default SignIn = props => {
 
   useEffect(() => {
     if (props.loggedIn) {
-      return props.history.push('/profile');
+      return props.history.push('/');
     }
   });
+
+  useEffect(() => {
+    setDrawer([]);
+    setDrawerTitle();
+  }, [i18n.language]);
 
   const handleSubmit = e => {
     e.preventDefault();

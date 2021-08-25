@@ -56,13 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default AddKey = ({
-  initialData,
-  settings,
-  subjects,
-  icon,
-  currentYear,
-}) => {
+export default AddKey = ({ initialData, settings, icon, currentYear }) => {
   const classes = useStyles();
   const [t, i18n] = useTranslation();
 

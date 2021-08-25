@@ -33,6 +33,18 @@ import '../../api/turkishA1/ratings/methods';
 import '../../api/turkishA1/settings/settings';
 import '../../api/turkishA1/settings/methods';
 
+import '../../api/sat/results/results';
+import '../../api/sat/results/methods';
+
+import '../../api/sat/ratings/ratings';
+import '../../api/sat/ratings/methods';
+
+import '../../api/ielts/results/results';
+import '../../api/ielts/results/methods';
+
+import '../../api/ielts/ratings/ratings';
+import '../../api/ielts/ratings/methods';
+
 import '../../api/schools/schools';
 import '../../api/schools/methods';
 

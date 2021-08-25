@@ -33,6 +33,12 @@ import TurkishA1Ratings from '../pages/Examinations/TurkishA1/Ratings/Ratings';
 import TurkishA1Main from '../pages/Examinations/TurkishA1/Main/Main';
 import TurkishA1Settings from '../pages/Examinations/TurkishA1/Settings/Settings';
 
+import SatResults from '../pages/Examinations/SAT/Results/Results';
+import SatRatings from '../pages/Examinations/SAT/Ratings/Ratings';
+
+import IeltsResults from '../pages/Examinations/IELTS/Results/Results';
+import IeltsRatings from '../pages/Examinations/IELTS/Ratings/Ratings';
+
 import Students from '../pages/Students/Main';
 import Schools from '../pages/Schools/Main';
 import StudentTransfers from '../pages/Students/Transfers';
@@ -65,7 +71,7 @@ const App = props => {
               {props.loggingIn && <Spinner />}
               <DrawerProvider>
                 <Switch>
-                  <PropsRoute exact path="/" component={Landing} {...props} />
+                  <PropsRoute exact path="/" component={Students} {...props} />
                   <PropsRoute path="/login" component={Login} {...props} />
                   <PropsRoute path="/signup" component={Signup} {...props} />
                   <PropsRoute path="/signin" component={SignIn} {...props} />
@@ -180,6 +186,44 @@ const App = props => {
                     exact
                     path="/turkishA1/settings"
                     component={TurkishA1Settings}
+                    {...props}
+                  />
+
+                  <PropsRoute
+                    exact
+                    path="/sat"
+                    component={SatResults}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/sat/results"
+                    component={SatResults}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/sat/ratings"
+                    component={SatRatings}
+                    {...props}
+                  />
+
+                  <PropsRoute
+                    exact
+                    path="/ielts"
+                    component={IeltsResults}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/ielts/results"
+                    component={IeltsResults}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/ielts/ratings"
+                    component={IeltsRatings}
                     {...props}
                   />
 

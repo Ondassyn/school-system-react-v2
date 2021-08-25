@@ -49,10 +49,12 @@ export const calculateRating = ({ t, academicYear, settings, examNumber }) => {
               average: t.total / t.n,
             });
         });
-        totalN && (rating.totalAverage = totalSum / totalN);
-        turkishA1RatingsInsert.call(rating, (err, res) => {
-          err && reject(err.message);
-        });
+        if (totalN) {
+          rating.totalAverage = totalSum / totalN;
+          turkishA1RatingsInsert.call(rating, (err, res) => {
+            err && reject(err.message);
+          });
+        }
 
         settings
           .filter(s => s.examNumber === examNumber)
@@ -99,11 +101,12 @@ export const calculateRating = ({ t, academicYear, settings, examNumber }) => {
                   average: t.total / t.n,
                 });
             });
-            gradeTotalN &&
-              (gradeRating.totalAverage = gradeTotalSum / gradeTotalN);
-            turkishA1RatingsInsert.call(gradeRating, (err, res) => {
-              err && reject(err.message);
-            });
+            if (gradeTotalN) {
+              gradeRating.totalAverage = gradeTotalSum / gradeTotalN;
+              turkishA1RatingsInsert.call(gradeRating, (err, res) => {
+                err && reject(err.message);
+              });
+            }
           });
       }
     });

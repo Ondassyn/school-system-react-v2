@@ -11,7 +11,6 @@ import TableIcons from '../../../../components/MaterialTable/TableIcons';
 
 // collection
 import TurkishA1Keys from '../../../../../api/turkishA1/keys/keys';
-import Subjects from '../../../../../api/subjects/subjects';
 
 import AddKey from './AddKey/AddKey';
 import DeleteKey from './DeleteKey/DeleteKey';
@@ -197,7 +196,6 @@ function Keys(props) {
               <AddKey
                 icon={'add'}
                 currentYear={props.currentYear}
-                subjects={props.subjects}
                 settings={props.settings}
               />
             </div>
@@ -214,46 +212,6 @@ function Keys(props) {
   );
 }
 
-Keys.defaultProps = {
-  // users: null, remote example (if using ddp)
-  keys: null,
-  subjects: null,
-};
-
-Keys.propTypes = {
-  loggedIn: PropTypes.bool.isRequired,
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
-  // remote example (if using ddp)
-  // usersReady: PropTypes.bool.isRequired,
-  // users: Meteor.user() ? PropTypes.array.isRequired : () => null,
-  keysReady: PropTypes.bool.isRequired,
-  currentYear: PropTypes.string.isRequired,
-  keys: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.string,
-      academicYear: PropTypes.string,
-      examNumber: PropTypes.number,
-      grade: PropTypes.number,
-      keys: PropTypes.arrayOf(
-        PropTypes.shape({
-          subjectId: PropTypes.string,
-          keys: PropTypes.string,
-        })
-      ),
-    })
-  ),
-  subjectsReady: PropTypes.bool.isRequired,
-  subjects: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.object,
-      subjectId: PropTypes.string,
-      name_en: PropTypes.string,
-    })
-  ),
-};
-
 export default withTracker(props => {
   // remote example (if using ddp)
   /*
@@ -267,10 +225,6 @@ export default withTracker(props => {
   const keys = TurkishA1Keys.find().fetch();
   const keysReady = turkishA1KeysSub.ready() && !!keys;
 
-  const subjectsSub = Meteor.subscribe('subjects.all');
-  const subjects = Subjects.find().fetch();
-  const subjectsReady = subjectsSub.ready() && !!subjects;
-
   const settingsSub = Meteor.subscribe(
     'turkishA1Settings.academicYear',
     props.currentYear
@@ -283,8 +237,6 @@ export default withTracker(props => {
     // users,
     keysReady,
     keys,
-    subjectsReady,
-    subjects,
     settings,
   };
 })(Keys);

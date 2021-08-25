@@ -63,3 +63,17 @@ import '../../api/turkishA1/ratings/publications.js';
 
 import '../../api/turkishA1/settings/methods.js';
 import '../../api/turkishA1/settings/publications.js';
+
+// sat api
+import '../../api/sat/results/methods.js';
+import '../../api/sat/results/publications.js';
+
+import '../../api/sat/ratings/methods.js';
+import '../../api/sat/ratings/publications.js';
+
+// ielts api
+import '../../api/ielts/results/methods.js';
+import '../../api/ielts/results/publications.js';
+
+import '../../api/ielts/ratings/methods.js';
+import '../../api/ielts/ratings/publications.js';
