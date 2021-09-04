@@ -33,6 +33,12 @@ import TurkishA1Ratings from '../pages/Examinations/TurkishA1/Ratings/Ratings';
 import TurkishA1Main from '../pages/Examinations/TurkishA1/Main/Main';
 import TurkishA1Settings from '../pages/Examinations/TurkishA1/Settings/Settings';
 
+import KboKeys from '../pages/Examinations/Kbo/Keys/Keys';
+import KboResults from '../pages/Examinations/Kbo/Results/Results';
+import KboRatings from '../pages/Examinations/Kbo/Ratings/Ratings';
+import KboMain from '../pages/Examinations/Kbo/Main/Main';
+import KboPercentages from '../pages/Examinations/Kbo/Percentages/Percentages';
+
 import SatResults from '../pages/Examinations/SAT/Results/Results';
 import SatRatings from '../pages/Examinations/SAT/Ratings/Ratings';
 
@@ -186,6 +192,37 @@ const App = props => {
                     exact
                     path="/turkishA1/settings"
                     component={TurkishA1Settings}
+                    {...props}
+                  />
+
+                  <PropsRoute
+                    exact
+                    path="/kbo"
+                    component={KboMain}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/kbo/keys"
+                    component={KboKeys}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/kbo/results"
+                    component={KboResults}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/kbo/percentages"
+                    component={KboPercentages}
+                    {...props}
+                  />
+                  <PropsRoute
+                    exact
+                    path="/kbo/ratings"
+                    component={KboRatings}
                     {...props}
                   />
 

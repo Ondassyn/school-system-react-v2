@@ -107,6 +107,9 @@
         "updated" : "Last updated",
         "sat": "SAT",
         "ielts" : "IELTS",
+        "kbo" : "KBO",
+        "percentages": "Percentages",
+        "average" : "Average",
 
         "paragraph": "Introduction",
         "author": {

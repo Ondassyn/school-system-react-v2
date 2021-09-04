@@ -10,7 +10,7 @@ import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 import { MethodHooks } from 'meteor/lacosta:method-hooks';
 import { CallPromiseMixin } from 'meteor/didericis:callpromise-mixin';
 
-import TurkishA1Keys from './keys.js';
+import KboKeys from './keys.js';
 
 /** **************** Helpers **************** */
 
@@ -25,14 +25,14 @@ const checkLoggedInError = {
 
 /** **************** Methods **************** */
 
-export const turkishA1KeysGetDistinct = new ValidatedMethod({
-  name: 'turkishA1Keys.getDistinct',
+export const kboKeysGetDistinct = new ValidatedMethod({
+  name: 'kboKeys.getDistinct',
   mixins,
   checkLoggedInError,
   validate: null,
   run(fieldName) {
     let distinctFieldValues = _.uniq(
-      TurkishA1Keys.find(
+      KboKeys.find(
         {},
         {
           sort: { [fieldName]: 1 },
@@ -51,17 +51,14 @@ export const turkishA1KeysGetDistinct = new ValidatedMethod({
 /**
  * used for example test in methods.tests.js
  */
-export const turkishA1KeysInsert = new ValidatedMethod({
-  name: 'turkishA1Keys.insert',
+export const kboKeysInsert = new ValidatedMethod({
+  name: 'kboKeys.insert',
   mixins: [CallPromiseMixin],
   validate: new SimpleSchema({
     academicYear: {
       type: String,
     },
     examNumber: {
-      type: SimpleSchema.Integer,
-    },
-    grade: {
       type: SimpleSchema.Integer,
     },
     variant: {
@@ -74,23 +71,19 @@ export const turkishA1KeysInsert = new ValidatedMethod({
     },
   }).validator(),
   checkLoggedInError,
-  run({ academicYear, examNumber, grade, variant, keys }) {
-    const recordInDB = TurkishA1Keys.findOne({
+  run({ academicYear, examNumber, variant, keys }) {
+    const recordInDB = KboKeys.findOne({
       academicYear,
       examNumber,
-      grade,
       variant,
     });
     if (recordInDB) {
-      TurkishA1Keys.update({ _id: recordInDB._id }, { $set: { keys: keys } });
+      KboKeys.update({ _id: recordInDB._id }, { $set: { keys: keys } });
       return recordInDB._id;
     } else {
-      const _id = Random.id();
-      const keyId = TurkishA1Keys.insert({
-        _id,
+      const keyId = KboKeys.insert({
         academicYear,
         examNumber,
-        grade,
         variant,
         keys,
       });
@@ -102,14 +95,14 @@ export const turkishA1KeysInsert = new ValidatedMethod({
 /**
  * used for example test in methods.tests.js
  */
-export const turkishA1KeysDelete = new ValidatedMethod({
-  name: 'turkishA1Keys.delete',
+export const kboKeysDelete = new ValidatedMethod({
+  name: 'kboKeys.delete',
   mixins: [CallPromiseMixin],
   validate: new SimpleSchema({
     _id: { type: String },
   }).validator(),
   checkLoggedInError,
   run({ _id }) {
-    return TurkishA1Keys.remove({ _id });
+    return KboKeys.remove({ _id });
   },
 });

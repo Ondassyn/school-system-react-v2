@@ -10,7 +10,7 @@ import { LoggedInMixin } from 'meteor/tunifight:loggedin-mixin';
 import { MethodHooks } from 'meteor/lacosta:method-hooks';
 import { CallPromiseMixin } from 'meteor/didericis:callpromise-mixin';
 
-import TurkishA1Keys from './keys.js';
+import KboPercentages from './percentages.js';
 
 /** **************** Helpers **************** */
 
@@ -25,14 +25,24 @@ const checkLoggedInError = {
 
 /** **************** Methods **************** */
 
-export const turkishA1KeysGetDistinct = new ValidatedMethod({
-  name: 'turkishA1Keys.getDistinct',
+/**
+ * countersIncrease
+ */
+
+export const kboPercentagesGetDistinct = new ValidatedMethod({
+  name: 'kboPercentages.getDistinct',
   mixins,
   checkLoggedInError,
   validate: null,
   run(fieldName) {
+    // if (Meteor.isServer) {
+    //   returnValues = Meteor.wrapAsync(callback => {
+    //     KboPercentages.rawCollection().distinct('grade', callback);
+    //   })();
+    // }
+
     let distinctFieldValues = _.uniq(
-      TurkishA1Keys.find(
+      KboPercentages.find(
         {},
         {
           sort: { [fieldName]: 1 },
@@ -48,11 +58,8 @@ export const turkishA1KeysGetDistinct = new ValidatedMethod({
   },
 });
 
-/**
- * used for example test in methods.tests.js
- */
-export const turkishA1KeysInsert = new ValidatedMethod({
-  name: 'turkishA1Keys.insert',
+export const kboPercentagesInsert = new ValidatedMethod({
+  name: 'kboPercentages.insert',
   mixins: [CallPromiseMixin],
   validate: new SimpleSchema({
     academicYear: {
@@ -61,55 +68,45 @@ export const turkishA1KeysInsert = new ValidatedMethod({
     examNumber: {
       type: SimpleSchema.Integer,
     },
-    grade: {
-      type: SimpleSchema.Integer,
+    schoolId: SimpleSchema.oneOf(String, SimpleSchema.Integer),
+    studentId: SimpleSchema.oneOf(
+      { type: String, optional: true },
+      { type: SimpleSchema.Integer, optional: true }
+    ),
+    grade: SimpleSchema.oneOf(String, SimpleSchema.Integer),
+    division: {
+      type: String,
     },
     variant: {
       type: String,
+      optional: true,
     },
-    keys: Array,
-    'keys.$': {
+    surname: {
+      type: String,
+    },
+    name: {
+      type: String,
+    },
+    percentages: Array,
+    'percentages.$': {
       type: Object,
       blackbox: true,
     },
   }).validator(),
   checkLoggedInError,
-  run({ academicYear, examNumber, grade, variant, keys }) {
-    const recordInDB = TurkishA1Keys.findOne({
-      academicYear,
-      examNumber,
-      grade,
-      variant,
+  run(studentResult) {
+    // console.log('counters.insert', _id);
+    const recordInDB = KboPercentages.findOne({
+      academicYear: studentResult.academicYear,
+      examNumber: studentResult.examNumber,
+      studentId: studentResult.studentId,
     });
     if (recordInDB) {
-      TurkishA1Keys.update({ _id: recordInDB._id }, { $set: { keys: keys } });
+      KboPercentages.update({ _id: recordInDB._id }, { $set: studentResult });
       return recordInDB._id;
     } else {
-      const _id = Random.id();
-      const keyId = TurkishA1Keys.insert({
-        _id,
-        academicYear,
-        examNumber,
-        grade,
-        variant,
-        keys,
-      });
+      const keyId = KboPercentages.insert(studentResult);
       return keyId;
     }
-  },
-});
-
-/**
- * used for example test in methods.tests.js
- */
-export const turkishA1KeysDelete = new ValidatedMethod({
-  name: 'turkishA1Keys.delete',
-  mixins: [CallPromiseMixin],
-  validate: new SimpleSchema({
-    _id: { type: String },
-  }).validator(),
-  checkLoggedInError,
-  run({ _id }) {
-    return TurkishA1Keys.remove({ _id });
   },
 });

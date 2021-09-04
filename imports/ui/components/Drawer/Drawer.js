@@ -211,6 +211,7 @@ export default function MiniDrawer({ children, mainTitle, items }) {
                   { title: t('turkishA1'), link: '/turkishA1' },
                   { title: t('sat'), link: '/sat' },
                   { title: t('ielts'), link: '/ielts' },
+                  { title: t('kbo'), link: '/kbo' },
                 ]}
               />
             </div>

@@ -77,3 +77,16 @@ import '../../api/ielts/results/publications.js';
 
 import '../../api/ielts/ratings/methods.js';
 import '../../api/ielts/ratings/publications.js';
+
+// kbo api
+import '../../api/kbo/keys/methods.js';
+import '../../api/kbo/keys/publications.js';
+
+import '../../api/kbo/results/methods.js';
+import '../../api/kbo/results/publications.js';
+
+import '../../api/kbo/percentages/methods.js';
+import '../../api/kbo/percentages/publications.js';
+
+import '../../api/kbo/ratings/methods.js';
+import '../../api/kbo/ratings/publications.js';

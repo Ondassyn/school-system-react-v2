@@ -3,13 +3,18 @@ import React, { useState, useEffect } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
+import { Typography } from '@material-ui/core';
+
+import { makeStyles } from '@material-ui/core';
 
 import MaterialTable, { MTableToolbar } from 'material-table';
 import TableIcons from '../../../../components/MaterialTable/TableIcons';
 
+import 'react-block-ui/style.css';
+
 // collections
-import BtsRatings from '../../../../../api/bts/ratings/ratings';
-import Subjects from '../../../../../api/subjects/subjects';
+import KboRatings from '../../../../../api/kbo/ratings/ratings';
+import KboPercentages from '../../../../../api/kbo/percentages/percentages';
 import Schools from '../../../../../api/schools/schools';
 
 import useDrawer from '../../../../../api/drawer/drawerConsumer';
@@ -17,31 +22,50 @@ import useDrawer from '../../../../../api/drawer/drawerConsumer';
 import VpnKeyOutlinedIcon from '@material-ui/icons/VpnKeyOutlined';
 import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
+import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import { useTranslation } from 'react-i18next';
-import { userIsInRole } from '../../../../../api/users/methods';
-import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
+import { CalculateRating } from './CalculateRating/CalculateRating';
 
-const EXAM_NAME = 'bts';
+const EXAM_NAME = 'kbo';
+
+const EXAM_NUMBERS = [1, 2, 3];
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  toolbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '1rem 2rem 0 2rem',
+  },
+  toolbarActions: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  actions: {
+    display: 'flex',
+  },
+}));
 
 const Ratings = props => {
+  const classes = useStyles();
+  const [blocking, setBlocking] = useState(false);
   const [columns, setColumns] = useState([]);
   const { setDrawer, setDrawerTitle } = useDrawer();
   const [t, i18n] = useTranslation();
 
   useEffect(() => {
     let headers = [];
-    props.ratings?.map(rating => {
-      rating.averages?.map(average => {
-        !headers.some(e => e.field === average.subjectId) &&
-          headers.push({
-            title: props.subjects?.find(s => s.subjectId === average.subjectId)
-              .name_en,
-            field: average.subjectId,
-          });
-      });
-    });
+    EXAM_NUMBERS.map(n =>
+      headers.push({
+        title: '' + n,
+        field: '' + n,
+      })
+    );
     setColumns(COLUMNS.concat(headers));
-  }, [props.ratings]);
+  }, [props.ratings, i18n.language]);
 
   useEffect(() => {
     const DRAWER_TITLE = {
@@ -72,18 +96,7 @@ const Ratings = props => {
       },
     ];
 
-    userIsInRole
-      .callPromise({ userId: Meteor.userId(), role: 'admin' })
-      .then(res => {
-        if (res) {
-          DRAWER_MENU.push({
-            title: t('settings'),
-            icon: <SettingsOutlinedIcon />,
-            link: '/' + EXAM_NAME + '/settings',
-          });
-        }
-        setDrawer(DRAWER_MENU);
-      });
+    setDrawer(DRAWER_MENU);
 
     setDrawerTitle(DRAWER_TITLE);
   }, [i18n.language]);
@@ -95,7 +108,7 @@ const Ratings = props => {
   if (!Meteor.userId()) return null;
 
   const lookupParser = fieldName => {
-    return Meteor.apply('btsRatings.getDistinct', [fieldName], {
+    return Meteor.apply('kboRatings.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       return { ...obj, [item]: item };
@@ -103,7 +116,7 @@ const Ratings = props => {
   };
 
   const lookupSchoolParser = fieldName => {
-    return Meteor.apply('btsRatings.getDistinct', [fieldName], {
+    return Meteor.apply('kboRatings.getDistinct', [fieldName], {
       returnStubValue: true,
     }).reduce((obj, item) => {
       let school = props.schools.find(e => e.schoolId === item);
@@ -119,11 +132,6 @@ const Ratings = props => {
       defaultFilter: props.currentYear,
     },
     {
-      title: t('exam_number'),
-      field: 'examNumber',
-      lookup: lookupParser('examNumber'),
-    },
-    {
       title: t('school'),
       field: 'schoolName',
       lookup: lookupSchoolParser('schoolId'),
@@ -134,31 +142,40 @@ const Ratings = props => {
       lookup: lookupParser('grade'),
     },
     {
-      title: t('total'),
-      field: 'total',
+      title: t('average'),
+      field: 'average',
+      render: rowData => {
+        let sum = 0;
+        let n = 0;
+        EXAM_NUMBERS.map(en => {
+          if (rowData[en]) {
+            sum += rowData[en];
+            n++;
+          }
+        });
+        if (n) return (sum / n).toFixed(0);
+      },
     },
   ];
 
   return (
     <div className="ratings-page">
       <MaterialTable
-        title={EXAM_NAME.toUpperCase() + ' ' + t('rating')}
+        title=""
         columns={columns}
         data={props.ratings.map(result => {
           let school = props.schools.find(e => e.schoolId === result.schoolId);
           let schoolName = school ? school.shortName : '';
           let returnObject = {
             academicYear: result.academicYear,
-            examNumber: result.examNumber,
             schoolName,
             grade: result.grade,
             division: result.division,
             surname: result.surname,
             name: result.name,
-            total: result.totalAverage.toFixed(2),
           };
           result.averages?.map(average => {
-            returnObject[average.subjectId] = average.average.toFixed(2);
+            returnObject[average.examNumber] = average.average.toFixed(2);
           });
           return returnObject;
         })}
@@ -209,6 +226,23 @@ const Ratings = props => {
             lastTooltip: t('last_page'),
           },
         }}
+        components={{
+          Toolbar: localProps => (
+            <div className={classes.toolbar}>
+              <Typography className={classes.tableTitle} variant="h6">
+                {t(EXAM_NAME).toUpperCase() + ' ' + t('rating')}
+              </Typography>
+              <div className={classes.toolbarActions}>
+                <MTableToolbar {...localProps} />
+                <CalculateRating
+                  setBlocking={setBlocking}
+                  currentYear={props.currentYear}
+                  examNumbers={EXAM_NUMBERS}
+                />
+              </div>
+            </div>
+          ),
+        }}
       />
     </div>
   );
@@ -222,24 +256,26 @@ export default withTracker(props => {
       const usersReady = usersSub.ready() && !!users;
       */
 
-  const ratingsSub = Meteor.subscribe('btsRatings.all');
-  const ratings = BtsRatings.find().fetch();
-  const ratingsReady = ratingsSub.ready() && !!ratings;
+  const ratingsSub = Meteor.subscribe('kboRatings.all');
+  const ratings = KboRatings.find().fetch();
 
-  const subjectsSub = Meteor.subscribe('subjects.all');
-  const subjects = Subjects.find().fetch();
-  const subjectsReady = subjectsSub.ready() && !!subjects;
+  if (Roles.userIsInRole(Meteor.userId(), 'admin')) {
+    Meteor.subscribe('kboPercentages.all');
+  } else if (Roles.userIsInRole(Meteor.userId(), 'school')) {
+    const schoolId = schools.find(e => e.userId === Meteor.userId())?.schoolId;
+    Meteor.subscribe('kboPercentages.school', schoolId);
+  }
+  const percentages = KboPercentages.find().fetch();
 
   const schoolsSub = Meteor.subscribe('schools.all');
   const schools = Schools.find().fetch();
-  const schoolsReady = schoolsSub.ready() && !!schools;
 
   return {
     // remote example (if using ddp)
     // usersReady,
     // users,
     ratings,
-    subjects,
+    percentages,
     schools,
   };
 })(Ratings);

@@ -45,6 +45,18 @@ import '../../api/ielts/results/methods';
 import '../../api/ielts/ratings/ratings';
 import '../../api/ielts/ratings/methods';
 
+import '../../api/kbo/keys/keys';
+import '../../api/kbo/keys/methods';
+
+import '../../api/kbo/results/results';
+import '../../api/kbo/results/methods';
+
+import '../../api/kbo/percentages/percentages';
+import '../../api/kbo/percentages/methods';
+
+import '../../api/kbo/ratings/ratings';
+import '../../api/kbo/ratings/methods';
+
 import '../../api/schools/schools';
 import '../../api/schools/methods';
 
